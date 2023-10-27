@@ -11,6 +11,9 @@ export const functions: MathFunction = {
   cos: {
     operation: (a) => Math.cos(a),
   },
+  tan: {
+    operation: (a) => Math.tan(a),
+  },
   sqrt: {
     operation: (a) => Math.sqrt(a),
   },
