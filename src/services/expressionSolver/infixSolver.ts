@@ -1,12 +1,21 @@
 import { functions } from "./functions";
 import operators from "./operators";
 
-export default function solveInfix(infix: string[]): number {
+export default function solveInfix(
+  infix: string[],
+  x: number | undefined = undefined
+): number {
   const stack: number[] = [];
   const operations: string[] = [];
 
   for (const token of infix) {
-    if (!isNaN(parseFloat(token))) {
+    if (token === "x") {
+      if (x !== undefined) {
+        stack.push(x);
+      } else {
+        throw new Error("Value of variable 'x' not specified");
+      }
+    } else if (!isNaN(parseFloat(token))) {
       stack.push(parseFloat(token));
     } else if (token in functions) {
       const a = stack.pop();
@@ -16,7 +25,7 @@ export default function solveInfix(infix: string[]): number {
       } else {
         throw new Error("Missing arguments for function: " + token);
       }
-    } else {
+    } else if (token in operators) {
       const b = stack.pop();
       const a = stack.pop();
 
@@ -26,6 +35,8 @@ export default function solveInfix(infix: string[]): number {
       } else {
         throw new Error("Missing arguments for operator: " + token);
       }
+    } else {
+      throw new Error("Unknown token: " + token);
     }
   }
 
