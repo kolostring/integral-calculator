@@ -25,11 +25,12 @@ export default function ShuntingYard(expression: string[]) {
     } else if (token === "(" || token in functions) {
       operatorStack.push(token);
     } else if (token === ")") {
-      while (
-        operatorStack.length > 0 &&
-        operatorStack[operatorStack.length - 1] !== "("
-      ) {
-        queue.push(operatorStack.pop()!);
+      try {
+        while (operatorStack[operatorStack.length - 1] !== "(") {
+          queue.push(operatorStack.pop()!);
+        }
+      } catch (e) {
+        throw new Error("Unpaired Parenthesis");
       }
       operatorStack.pop();
 
@@ -42,6 +43,10 @@ export default function ShuntingYard(expression: string[]) {
     } else {
       queue.push(token);
     }
+  }
+
+  if (operatorStack.includes("(")) {
+    throw new Error("Unpaired Parenthesis");
   }
 
   return queue.concat(operatorStack.reverse());
