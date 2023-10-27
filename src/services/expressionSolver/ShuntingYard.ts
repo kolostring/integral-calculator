@@ -1,3 +1,4 @@
+import { functions } from "./functions";
 import operators from "./operators";
 
 export default function ShuntingYard(expression: string[]) {
@@ -5,7 +6,7 @@ export default function ShuntingYard(expression: string[]) {
   const operatorStack: string[] = [];
 
   for (const token of expression) {
-    if (Object.keys(operators).includes(token)) {
+    if (token in operators) {
       while (
         operatorStack.length > 0 &&
         operatorStack[operatorStack.length - 1] !== "(" &&
@@ -21,8 +22,8 @@ export default function ShuntingYard(expression: string[]) {
         queue.push(operatorStack.pop()!);
 
       operatorStack.push(token);
-    } else if (token === "(") {
-      operatorStack.push("(");
+    } else if (token === "(" || token in functions) {
+      operatorStack.push(token);
     } else if (token === ")") {
       while (
         operatorStack.length > 0 &&
@@ -31,6 +32,13 @@ export default function ShuntingYard(expression: string[]) {
         queue.push(operatorStack.pop()!);
       }
       operatorStack.pop();
+
+      if (
+        operatorStack.length > 0 &&
+        operatorStack[operatorStack.length - 1] in functions
+      ) {
+        queue.push(operatorStack.pop()!);
+      }
     } else {
       queue.push(token);
     }
