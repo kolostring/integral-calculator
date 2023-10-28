@@ -1,8 +1,8 @@
 export default function MidpointRemannSum(
-  n: number,
+  functionEvaluation: (x: number) => number,
   from: number,
   to: number,
-  functionEvaluation: (x: number) => number
+  n: number
 ) {
   const deltaX = (to - from) / n;
   let result = 0;
