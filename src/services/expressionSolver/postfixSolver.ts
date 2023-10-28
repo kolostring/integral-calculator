@@ -1,7 +1,7 @@
 import { functions } from "./functions";
 import operators from "./operators";
 
-export default function solveInfix(
+export default function solvePostfix(
   infix: string[],
   x: number | undefined = undefined
 ): number {
