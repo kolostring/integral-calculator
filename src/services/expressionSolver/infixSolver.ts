@@ -19,7 +19,7 @@ export default function solveInfix(
       stack.push(parseFloat(token));
     } else if (token in functions) {
       const a = stack.pop();
-      if (a) {
+      if (a !== undefined) {
         stack.push(functions[token].operation(a));
         operations.push(token + "(" + a + ") = " + stack[stack.length - 1]);
       } else {
