@@ -29,7 +29,7 @@ export default function solvePostfix(
       const b = stack.pop();
       const a = stack.pop();
 
-      if (a && b) {
+      if (a !== undefined && b !== undefined) {
         stack.push(operators[token].operation(a, b));
         operations.push(a + token + b + " = " + stack[stack.length - 1]);
       } else {
