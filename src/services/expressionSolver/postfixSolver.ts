@@ -1,10 +1,15 @@
 import { functions } from "./functions";
 import operators from "./operators";
 
+interface PostfixResult {
+  result: number;
+  operations: string[];
+}
+
 export default function solvePostfix(
   infix: string[],
   x: number | undefined = undefined
-): number {
+): PostfixResult {
   const stack: number[] = [];
   const operations: string[] = [];
 
@@ -15,6 +20,8 @@ export default function solvePostfix(
       } else {
         throw new Error("Value of variable 'x' not specified");
       }
+    } else if (token === "e") {
+      stack.push(Math.E);
     } else if (!isNaN(parseFloat(token))) {
       stack.push(parseFloat(token));
     } else if (token in functions) {
@@ -44,6 +51,5 @@ export default function solvePostfix(
     throw new Error("Missing operators");
   }
 
-  console.log(operations);
-  return stack.pop() as number;
+  return { result: stack.pop() as number, operations };
 }
