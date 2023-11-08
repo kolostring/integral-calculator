@@ -1,23 +1,15 @@
-import { HTMLAttributes, SVGAttributes } from "react";
-
-interface SVGFunctionGrapherProps extends HTMLAttributes<SVGElement> {
-  functionPoints: number[];
-  from: number;
-  to: number;
-  scale : number
-  axesProps : SVGAttributes<SVGPathElement> 
-  graphProps : SVGAttributes<SVGPathElement>
-}
+import ISVGFunctionGrapher from "../models/ISVGFunctionGrapher";
 
 export default function SVGFunctionGrapher({
   functionPoints,
   from,
   to,
   scale,
+  position,
   axesProps,
   graphProps,
   ...props
-}: SVGFunctionGrapherProps) {
+}: Readonly<ISVGFunctionGrapher>) {
   const maxY = Math.max.apply(null, functionPoints);
   const minY = Math.min.apply(null, functionPoints);
   const deltaX = (to - from) / functionPoints.length;
@@ -28,8 +20,8 @@ export default function SVGFunctionGrapher({
   );
 
   const axesPathD = () => {
-    return `M 0 ${-dimensions} V ${dimensions} M ${-dimensions} 0 H ${dimensions} `;
-  }
+    return `M 0 ${-dimensions+position.y} V ${dimensions+position.y} M ${-dimensions+position.x} 0 H ${dimensions+position.x} `;
+  };
 
   const graphPathD = () => {
     let path = "";
@@ -45,14 +37,13 @@ export default function SVGFunctionGrapher({
 
   return (
     <svg
-      width="100%"
-      viewBox={`${-dimensions / 2} ${
-        -dimensions / 2
+      viewBox={`${-dimensions / 2 + position.x} ${
+        -dimensions / 2 + position.y
       } ${dimensions} ${dimensions}`}
       {...props}
     >
       <path d={axesPathD()} {...axesProps} />
-      <path d={graphPathD()} {...graphProps}/>
+      <path d={graphPathD()} {...graphProps} />
     </svg>
   );
 }
