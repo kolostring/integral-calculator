@@ -32,7 +32,17 @@ export default function solvePostfix(
       } else {
         throw new Error("Missing arguments for function: " + token);
       }
-    } else if (token in operators) {
+    } 
+    else if (token === '!'){
+      const a = stack.pop();
+      if (a !== undefined) {
+        stack.push(operators[token].operation(a));
+        operations.push(a + "*-1 = " + stack[stack.length - 1]);
+      } else {
+        throw new Error("Missing arguments for operator: " + token);
+      }
+    }
+    else if (token in operators) {
       const b = stack.pop();
       const a = stack.pop();
 

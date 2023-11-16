@@ -4,20 +4,17 @@ import operators from "./operators";
 export default function ShuntingYard(expression: string[]) {
   const queue: string[] = [];
   const operatorStack: string[] = [];
-
   for (const token of expression) {
     if (token in operators) {
+      let lastOperator;
+
       while (
         operatorStack.length > 0 &&
-        operatorStack[operatorStack.length - 1] !== "(" &&
-        ((operators[operatorStack[operatorStack.length - 1]]
-          .leftAssociativity &&
-          operators[operatorStack[operatorStack.length - 1]].precedence >=
-            operators[token].precedence) ||
-          (!operators[operatorStack[operatorStack.length - 1]]
-            .leftAssociativity &&
-            operators[operatorStack[operatorStack.length - 1]].precedence >
-              operators[token].precedence))
+        (lastOperator = operatorStack[operatorStack.length - 1]) !== "(" &&
+        ((operators[lastOperator].leftAssociativity &&
+          operators[lastOperator].precedence >= operators[token].precedence) ||
+          (!operators[lastOperator].leftAssociativity &&
+            operators[lastOperator].precedence > operators[token].precedence))
       )
         queue.push(operatorStack.pop()!);
 
@@ -49,5 +46,6 @@ export default function ShuntingYard(expression: string[]) {
     throw new Error("Unpaired Parenthesis");
   }
 
+  console.log(queue.concat(operatorStack.reverse()))
   return queue.concat(operatorStack.reverse());
 }
