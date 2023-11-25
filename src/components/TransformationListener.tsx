@@ -20,6 +20,7 @@ export default function TransformationListener({
   };
 
   const handleTouchStart = (event: React.TouchEvent) => {
+    document.body.style.overflow = "hidden";
     if (event.touches.length === 1) {
       const x = event.touches.item(0).clientX;
       const y = event.touches.item(0).clientY;
@@ -47,7 +48,7 @@ export default function TransformationListener({
     }
     if (event.touches.length === 2) {
       const pinchDistance = obtainPinchDistance(event.touches);
-      const zoom = (pinchDistance - lastPinchDistance)/10;
+      const zoom = (pinchDistance - lastPinchDistance) / 10;
       onZoom(zoom);
       setLastPinchDistance(pinchDistance);
     }
@@ -73,10 +74,19 @@ export default function TransformationListener({
     <div
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
+      onTouchEnd={() => {
+        document.body.style.overflow = "auto";
+      }}
+      onMouseEnter={() => {
+        document.body.style.overflow = "hidden";
+      }}
+      onMouseLeave={() => {
+        document.body.style.overflow = "auto";
+      }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onWheel={handleWheel}
-      className={"touch-none "+className}
+      className={"touch-none " + className}
     >
       {children}
     </div>
