@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"] {
+    -webkit-appearance: none;
+    margin: 0;
+    -moz-appearance: textfield !important;
+  }
+}
+
+body{
+    @apply bg-cyan-950 text-cyan-50
+}
+
+input{
+  @apply focus:outline-none
+}
+
+input[type="text"],
+input[type="number"]{
+    @apply font-math rounded-sm min-w-[1.5rem] px-2 text-center w-6 bg-cyan-950 focus:bg-cyan-300 hover:text-cyan-900 active:bg-cyan-400 focus:text-cyan-900 transition-colors
+}
+
+input[type="radio"]{
+    @apply w-3 h-3 appearance-none bg-cyan-950 mr-2 rounded-full checked:bg-cyan-600 transition-colors
+}
