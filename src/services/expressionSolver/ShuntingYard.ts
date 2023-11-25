@@ -46,6 +46,5 @@ export default function ShuntingYard(expression: string[]) {
     throw new Error("Unpaired Parenthesis");
   }
 
-  console.log(queue.concat(operatorStack.reverse()))
   return queue.concat(operatorStack.reverse());
 }
