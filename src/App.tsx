@@ -231,7 +231,7 @@ function App() {
         </div>
 
         <div className="box-content col-start-2 row-span-2 row-start-1 border-2 mx-auto bg-cyan-950 border-cyan-500 w-full aspect-square">
-          <SVGGraphTransformator className="">
+          <SVGGraphTransformator className="overflow-hidden relative">
             {graphNode}
           </SVGGraphTransformator>
         </div>

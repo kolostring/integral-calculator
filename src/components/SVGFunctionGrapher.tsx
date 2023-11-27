@@ -27,11 +27,11 @@ export default function SVGFunctionGrapher({
     functionPoints.forEach((y, index) => {
       path += `L ${(index * deltaX + from) * scale} `;
       if (isFinite(y)) {
-        path += (-y * scale)+" ";
-      } else if (y === Infinity){
-        path += (99999999999)+" ";
+        path += -y * scale + " ";
+      } else if (y === Infinity) {
+        path += 99999999999 + " ";
       } else {
-        path += (99999999999)+" ";
+        path += 99999999999 + " ";
       }
     });
 
@@ -40,14 +40,28 @@ export default function SVGFunctionGrapher({
   };
 
   return (
-    <svg
-      viewBox={`${-dimensions / 2 + position.x} ${
-        -dimensions / 2 + position.y
-      } ${dimensions} ${dimensions}`}
-      {...props}
-    >
-      <path d={axesPathD()} {...axesProps} />
-      <path d={graphPathD()} {...graphProps} />
-    </svg>
+    <>
+      <svg
+        viewBox={`${-dimensions / 2 + position.x} ${
+          -dimensions / 2 + position.y
+        } ${dimensions} ${dimensions}`}
+        {...props}
+      >
+        <path d={axesPathD()} {...axesProps} />
+        <path d={graphPathD()} {...graphProps} />
+      </svg>
+      <h1
+        className="absolute text-cyan-200"
+        style={{ left: `${(dimensions / 2 - position.x + from) / 2}%` , top: `${(dimensions / 2 - position.y) / 2}%`}}
+      >
+        {from}
+      </h1>
+      <h1
+        className="absolute text-cyan-200"
+        style={{ left: `${(dimensions / 2 - position.x + to*scale) / 2}%` , top: `${(dimensions / 2 - position.y) / 2}%`}}
+      >
+        {to}
+      </h1>
+    </>
   );
 }
