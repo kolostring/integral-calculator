@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import ITransformationListener from "../models/ITransformationListener";
 
 export default function TransformationListener({
@@ -18,6 +18,22 @@ export default function TransformationListener({
       touch1.clientY - touch2.clientY
     );
   };
+
+  const obtainPinchCenter = (touches: React.TouchList) => {
+    const touch1 = touches.item(0);
+    const touch2 = touches.item(1);
+    return {
+      x: (touch1.clientX + touch2.clientX) / 2,
+      y: (touch1.clientY + touch2.clientY) / 2
+    };
+  }
+
+  const obtainRelativeOrigin = (pos :{x: number, y: number}, targetRect: DOMRect) => {
+    const origin = {x: pos.x - targetRect.left - targetRect.width / 2, y: pos.y - targetRect.top - targetRect.height / 2};
+    const relativeOrigin = {x: origin.x / (targetRect.width / 2), y: origin.y / (targetRect.height /2)}
+
+    return relativeOrigin;
+  }
 
   const handleTouchStart = (event: React.TouchEvent) => {
     if (event.touches.length === 1) {
@@ -50,7 +66,11 @@ export default function TransformationListener({
 
       const delta = pinchDistance - lastPinchDistance;
       setLastPinchDistance(pinchDistance);
-      onZoom(delta/15);
+
+      const pos = obtainPinchCenter(event.touches);
+      const targetRect = event.currentTarget.getBoundingClientRect();
+
+      onZoom(delta/15, obtainRelativeOrigin(pos, targetRect));
     }
   };
 
@@ -76,7 +96,10 @@ export default function TransformationListener({
   };
 
   const handleWheel = (event: React.WheelEvent) => {
-    onZoom(Math.sign(-event.deltaY));
+    const pos = {x: event.clientX, y: event.clientY};
+    const targetRect = event.currentTarget.getBoundingClientRect();
+
+    onZoom(Math.sign(-event.deltaY), obtainRelativeOrigin(pos, targetRect));
   };
 
   return (

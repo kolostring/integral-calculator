@@ -13,12 +13,12 @@ export default function SVGGraphTransformator({
   const [scale, setScale] = useState(10);
   const child = cloneElement(children, {scale: scale, position: position})
 
-  const handleScale = (zoom: number) => {
+  const handleScale = (zoom: number, relativeOrigin: {x: number, y: number}) => {
     setScale(Math.max(Math.abs(scale + zoom), 5));
 
     if(zoom !== 0){ 
       const zoomMult = zoom / scale;
-      setPosition({x: position.x + position.x * zoomMult, y: position.y + position.y * zoomMult});
+      setPosition({x: position.x + (position.x + relativeOrigin.x * 100) * zoomMult , y: position.y + (position.y + relativeOrigin.y * 100) * zoomMult});
     }
 
   };
