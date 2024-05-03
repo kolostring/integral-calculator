@@ -53,6 +53,15 @@ export default function TransformationListener({
     }
   };
 
+  const handleTouchEnd = (event: React.TouchEvent) => {
+    if(event.touches.length === 1) {
+      setTranslateTouch({
+        x: event.touches.item(0).clientX,
+        y: event.touches.item(0).clientY,
+      });
+    }
+  }
+
   const handleMouseMove = (event: React.MouseEvent) => {
     if (event.buttons !== 1) return;
 
@@ -73,6 +82,7 @@ export default function TransformationListener({
     <div
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onWheel={handleWheel}
