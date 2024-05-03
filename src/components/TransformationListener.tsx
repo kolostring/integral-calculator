@@ -47,9 +47,10 @@ export default function TransformationListener({
     }
     if (event.touches.length === 2) {
       const pinchDistance = obtainPinchDistance(event.touches);
-      const zoom = (pinchDistance - lastPinchDistance) / 10;
-      onZoom(zoom);
+
+      const delta = pinchDistance - lastPinchDistance;
       setLastPinchDistance(pinchDistance);
+      onZoom(delta/15);
     }
   };
 
@@ -75,7 +76,7 @@ export default function TransformationListener({
   };
 
   const handleWheel = (event: React.WheelEvent) => {
-    onZoom(-event.deltaY / 100);
+    onZoom(Math.sign(-event.deltaY));
   };
 
   return (
