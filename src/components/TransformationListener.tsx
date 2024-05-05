@@ -4,8 +4,8 @@ import ITransformationListener from "../models/ITransformationListener";
 export default function TransformationListener({
   onZoom,
   onTranslate,
-  children,
   className,
+  ...props
 }: Readonly<ITransformationListener>) {
   const [translateTouch, setTranslateTouch] = useState({ x: 0, y: 0 });
   const [lastPinchDistance, setLastPinchDistance] = useState(1);
@@ -41,7 +41,7 @@ export default function TransformationListener({
       const pos = obtainPinchCenter(event.touches);
       const targetRect = event.currentTarget.getBoundingClientRect();
 
-      onZoom(delta / 15, obtainRelativeOrigin(pos, targetRect));
+      onZoom(delta / 15, obtainAbsoluteOrigin(pos, targetRect));
     }
   };
 
@@ -74,7 +74,7 @@ export default function TransformationListener({
     const pos = { x: event.clientX, y: event.clientY };
     const targetRect = event.currentTarget.getBoundingClientRect();
 
-    onZoom(Math.sign(-event.deltaY), obtainRelativeOrigin(pos, targetRect));
+    onZoom(Math.sign(-event.deltaY), obtainAbsoluteOrigin(pos, targetRect));
   };
 
   const obtainPinchDistance = (touches: React.TouchList) => {
@@ -95,7 +95,7 @@ export default function TransformationListener({
     };
   };
 
-  const obtainRelativeOrigin = (
+  const obtainAbsoluteOrigin = (
     pos: { x: number; y: number },
     targetRect: DOMRect
   ) => {
@@ -103,12 +103,8 @@ export default function TransformationListener({
       x: pos.x - targetRect.left - targetRect.width / 2,
       y: pos.y - targetRect.top - targetRect.height / 2,
     };
-    const relativeOrigin = {
-      x: origin.x / (targetRect.width / 2),
-      y: origin.y / (targetRect.height / 2),
-    };
 
-    return relativeOrigin;
+    return origin;
   };
 
   return (
@@ -119,9 +115,9 @@ export default function TransformationListener({
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onWheel={handleWheel}
-      className={`touch-none ${className}`}
+      className={`touch-noneS h-full w-full ${className}`}
+      {...props}
     >
-      {children}
     </div>
   );
 }

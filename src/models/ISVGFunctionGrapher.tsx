@@ -4,9 +4,11 @@ export default interface ISVGFunctionGrapher extends HTMLAttributes<SVGElement> 
     functionPoints: number[];
     from: number;
     to: number;
-    scale : number
-    position: {x: number, y:number}
-    axesProps : SVGAttributes<SVGPathElement> 
-    graphProps : SVGAttributes<SVGPathElement>
+    width: number;
+    height: number;
+    scale : number;
+    position: {x: number, y:number};
+    axesProps : SVGAttributes<SVGPathElement>; 
+    graphProps : SVGAttributes<SVGPathElement>;
   }
   

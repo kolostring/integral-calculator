@@ -5,6 +5,8 @@ export default function SVGFunctionGrapher({
   from,
   to,
   scale,
+  width,
+  height,
   position,
   axesProps,
   graphProps,
@@ -12,12 +14,10 @@ export default function SVGFunctionGrapher({
 }: Readonly<ISVGFunctionGrapher>) {
   const deltaX = (to - from) / functionPoints.length;
 
-  const dimensions = 200;
-
   const axesPathD = () => {
-    return `M 0 ${-dimensions + position.y} V ${dimensions + position.y} M ${
-      -dimensions + position.x
-    } 0 H ${dimensions + position.x} `;
+    return `M 0 ${-height + position.y} V ${height + position.y} M ${
+      -width + position.x
+    } 0 H ${width + position.x} `;
   };
 
   const graphPathD = () => {
@@ -42,9 +42,9 @@ export default function SVGFunctionGrapher({
   return (
     <>
       <svg
-        viewBox={`${-dimensions / 2 + position.x} ${
-          -dimensions / 2 + position.y
-        } ${dimensions} ${dimensions}`}
+        viewBox={`${-width / 2 + position.x} ${
+          -height / 2 + position.y
+        } ${width} ${height}`}
         {...props}
       >
         <path d={axesPathD()} {...axesProps} />
@@ -52,13 +52,13 @@ export default function SVGFunctionGrapher({
       </svg>
       <h1
         className="absolute text-cyan-200"
-        style={{ left: `${(dimensions / 2 - position.x + from) / 2}%` , top: `${(dimensions / 2 - position.y) / 2}%`}}
+        style={{ left: `${(width / 2 - position.x + from*scale)}px` , top: `${height / 2 - (position.y) }px`}}
       >
         {from}
       </h1>
       <h1
         className="absolute text-cyan-200"
-        style={{ left: `${(dimensions / 2 - position.x + to*scale) / 2}%` , top: `${(dimensions / 2 - position.y) / 2}%`}}
+        style={{ left: `${(width / 2 - position.x + to*scale)}px` , top: `${(height / 2 - position.y)}px`}}
       >
         {to}
       </h1>
