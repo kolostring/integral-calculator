@@ -1,4 +1,14 @@
-import ISVGFunctionGrapher from "../models/ISVGFunctionGrapher";
+export type SVGFunctionGrapherProps = {
+  functionPoints: number[];
+  from: number;
+  to: number;
+  width: number;
+  height: number;
+  scale : number;
+  position: {x: number, y:number};
+  axesProps : React.SVGAttributes<SVGPathElement>; 
+  graphProps : React.SVGAttributes<SVGPathElement>;
+} & React.HTMLAttributes<SVGElement>
 
 export default function SVGFunctionGrapher({
   functionPoints,
@@ -11,7 +21,7 @@ export default function SVGFunctionGrapher({
   axesProps,
   graphProps,
   ...props
-}: Readonly<ISVGFunctionGrapher>) {
+}: Readonly<SVGFunctionGrapherProps>) {
   const deltaX = (to - from) / functionPoints.length;
 
   const axesPathD = () => {

@@ -1,12 +1,12 @@
 import { ReactElement, cloneElement, useLayoutEffect, useRef, useState } from "react";
 import TransformationListener from "./TransformationListener";
-import ISVGFunctionGrapher from "../models/ISVGFunctionGrapher";
+import { SVGFunctionGrapherProps } from "./SVGFunctionGrapher";
 
 export default function SVGGraphTransformator({
   children,
   className,
 }: Readonly<{
-  children: ReactElement<ISVGFunctionGrapher>;
+  children: ReactElement<SVGFunctionGrapherProps>;
   className?: string;
 }>) {
   const [position, setPosition] = useState({ x: 0, y: 0 });

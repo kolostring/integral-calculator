@@ -1,4 +1,4 @@
-interface MathFunction {
+type MathFunction = {
   [key: string]: {
     operation: (a: number) => number;
   };

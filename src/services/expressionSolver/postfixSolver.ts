@@ -1,7 +1,7 @@
 import { functions } from "./functions";
 import operators from "./operators";
 
-interface PostfixResult {
+type PostfixResult = {
   result: number;
   operations: string[];
 }

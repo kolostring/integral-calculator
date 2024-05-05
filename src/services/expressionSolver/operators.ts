@@ -1,4 +1,4 @@
-interface Operator {
+type Operator = {
   [key: string]: {
     operation: (a: number, b?: number) => number;
     precedence: number;

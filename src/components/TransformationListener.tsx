@@ -1,12 +1,16 @@
 import React, { useState } from "react";
-import ITransformationListener from "../models/ITransformationListener";
+
+export type TransformationListenerProps = {
+  onZoom: (zoom: number, origin: {x: number, y: number}) => void;
+  onTranslate: (x: number, y: number) => void;
+} & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
 
 export default function TransformationListener({
   onZoom,
   onTranslate,
   className,
   ...props
-}: Readonly<ITransformationListener>) {
+}: Readonly<TransformationListenerProps>) {
   const [translateTouch, setTranslateTouch] = useState({ x: 0, y: 0 });
   const [lastPinchDistance, setLastPinchDistance] = useState(1);
 
