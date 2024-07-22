@@ -40,10 +40,20 @@ export default function SVGGraphTransformator({
   };
 
   useLayoutEffect(()=>{
-    const refRect = refContainer.current?.getBoundingClientRect();
-    if(refRect){
-      setWidth(refRect.width);
-      setHeight(refRect.height);
+    const updateSize =()=>{
+      const refRect = refContainer.current?.getBoundingClientRect();
+      if(refRect){
+        setWidth(refRect.width);
+        setHeight(refRect.height);
+      }
+    }
+
+    updateSize();
+
+    window.addEventListener("resize", updateSize);
+
+    return ()=>{
+      window.removeEventListener("resize", updateSize);
     }
   },[])
 
