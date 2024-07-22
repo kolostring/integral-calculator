@@ -28,6 +28,8 @@ export default function SVGGraphTransformator({
       position: position,
       width: width,
       height: height,
+      from: (position.x - width/2) /scale,
+      to: (position.x + width/2) /scale,
     });
   };
 

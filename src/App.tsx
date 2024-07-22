@@ -34,14 +34,15 @@ function App() {
   const buildGraph = () => {
     return (
       <SVGFunctionGrapher
-        className="w-full h-full"
-        scale={10}
+        width={0}
+        height={0}
+        scale={90}
         position={{ x: 0, y: 0 }}
         from={from}
         to={to}
         axesProps={{ className: "stroke-cyan-500" }}
-        graphProps={{ className: "stroke-cyan-300 fill-cyan-900" }}
-        functionPoints={(() => {
+        graphProps={{ className: "stroke-cyan-300 fill-transparent" }}
+        functionPoints={(from, to) => {
           const res = [];
           const n = 1000;
           const deltaX = (to - from) / n;
@@ -52,6 +53,7 @@ function App() {
                 ShuntingYard(parseExpression(expression)),
                 from + deltaX * i
               ).result;
+
               res.push(ev);
             } catch (e) {
               console.log(e);
@@ -59,7 +61,7 @@ function App() {
           }
 
           return res;
-        })()}
+        }}
       />
     );
   };
@@ -231,7 +233,7 @@ function App() {
         </div>
 
         <div className="box-content col-start-2 row-span-2 row-start-1 border-2 mx-auto bg-cyan-950 border-cyan-500 w-full aspect-square">
-          <SVGGraphTransformator className="overflow-hidden relative">
+          <SVGGraphTransformator className="relative">
             {graphNode}
           </SVGGraphTransformator>
         </div>

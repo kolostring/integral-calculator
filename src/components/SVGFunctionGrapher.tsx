@@ -1,14 +1,16 @@
+import { useCallback } from "react";
+
 export type SVGFunctionGrapherProps = {
-  functionPoints: number[];
+  functionPoints: (from: number, to: number) => number[];
   from: number;
   to: number;
   width: number;
   height: number;
-  scale : number;
-  position: {x: number, y:number};
-  axesProps : React.SVGAttributes<SVGPathElement>; 
-  graphProps : React.SVGAttributes<SVGPathElement>;
-} & React.HTMLAttributes<SVGElement>
+  scale: number;
+  position: { x: number; y: number };
+  axesProps: React.SVGAttributes<SVGPathElement>;
+  graphProps: React.SVGAttributes<SVGPathElement>;
+} & React.HTMLAttributes<SVGElement>;
 
 export default function SVGFunctionGrapher({
   functionPoints,
@@ -22,22 +24,20 @@ export default function SVGFunctionGrapher({
   graphProps,
   ...props
 }: Readonly<SVGFunctionGrapherProps>) {
-  const deltaX = (to - from) / functionPoints.length;
-
   const axesPathD = () => {
-    return `M 0 ${-height + position.y} V ${height + position.y} M ${
-      -width + position.x
-    } 0 H ${width + position.x} `;
+    return `M ${-position.x} ${-height} V ${height} M ${-width} ${-position.y} H ${width} `;
   };
 
-  const graphPathD = () => {
+  const graphPathD = useCallback(() => {
     let path = "";
+    const points = functionPoints(from, to);
+    const deltaX = (to - from) / points.length;
 
-    path += `M ${(deltaX + from) * scale} 0 `;
-    functionPoints.forEach((y, index) => {
-      path += `L ${(index * deltaX + from) * scale} `;
+    path += `M ${(deltaX + from) * scale - position.x} ${-position.y} `;
+    points.forEach((y, index) => {
+      path += `L ${(index * deltaX + from) * scale - position.x} `;
       if (isFinite(y)) {
-        path += -y * scale + " ";
+        path += -y * scale - position.y + " ";
       } else if (y === Infinity) {
         path += 99999999999 + " ";
       } else {
@@ -45,33 +45,14 @@ export default function SVGFunctionGrapher({
       }
     });
 
-    path += `V ${0}`;
+    path += `V ${-position.y}`;
     return path;
-  };
+  }, [from, to, position, scale, functionPoints])
 
   return (
-    <>
-      <svg
-        viewBox={`${-width / 2 + position.x} ${
-          -height / 2 + position.y
-        } ${width} ${height}`}
-        {...props}
-      >
-        <path d={axesPathD()} {...axesProps} />
-        <path d={graphPathD()} {...graphProps} />
-      </svg>
-      <h1
-        className="absolute text-cyan-200"
-        style={{ left: `${(width / 2 - position.x + from*scale)}px` , top: `${height / 2 - (position.y) }px`}}
-      >
-        {from}
-      </h1>
-      <h1
-        className="absolute text-cyan-200"
-        style={{ left: `${(width / 2 - position.x + to*scale)}px` , top: `${(height / 2 - position.y)}px`}}
-      >
-        {to}
-      </h1>
-    </>
+    <svg viewBox={`${-width / 2} ${-height / 2} ${width} ${height}`} {...props}>
+      <path d={axesPathD()} {...axesProps} />
+      <path d={graphPathD()} {...graphProps} />
+    </svg>
   );
 }
