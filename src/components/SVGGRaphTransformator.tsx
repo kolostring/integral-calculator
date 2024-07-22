@@ -1,6 +1,12 @@
-import { ReactElement, cloneElement, useLayoutEffect, useRef, useState } from "react";
-import TransformationListener from "./TransformationListener";
+import {
+  ReactElement,
+  cloneElement,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { SVGFunctionGrapherProps } from "./SVGFunctionGrapher";
+import useTransform from "../hooks/useTransform";
 
 export default function SVGGraphTransformator({
   children,
@@ -13,12 +19,17 @@ export default function SVGGraphTransformator({
   const [scale, setScale] = useState(10);
   const [height, setHeight] = useState(100);
   const [width, setWidth] = useState(100);
-  
+
   const refContainer = useRef<HTMLDivElement>(null);
 
-  const obtainChild = () =>{
-    return cloneElement(children, { scale: scale, position: position, width: width, height: height});
-  }
+  const obtainChild = () => {
+    return cloneElement(children, {
+      scale: scale,
+      position: position,
+      width: width,
+      height: height,
+    });
+  };
 
   const handleScale = (
     zoom: number,
@@ -39,33 +50,33 @@ export default function SVGGraphTransformator({
     setPosition({ x: position.x + x, y: position.y + y });
   };
 
-  useLayoutEffect(()=>{
-    const updateSize =()=>{
+  const transformHandler = useTransform(handlePosition, handleScale);
+
+  useLayoutEffect(() => {
+    const updateSize = () => {
       const refRect = refContainer.current?.getBoundingClientRect();
-      if(refRect){
+      if (refRect) {
         setWidth(refRect.width);
         setHeight(refRect.height);
       }
-    }
+    };
 
     updateSize();
 
     window.addEventListener("resize", updateSize);
 
-    return ()=>{
+    return () => {
       window.removeEventListener("resize", updateSize);
-    }
-  },[])
+    };
+  }, []);
 
   return (
-    <div ref={refContainer} className="h-full w-full">  
-      <TransformationListener
-        onTranslate={handlePosition}
-        onZoom={handleScale}
-        className={className}
-      >
-        {obtainChild()}
-      </TransformationListener>
+    <div
+      ref={refContainer}
+      className={`${className} touch-none h-full w-full`}
+      {...transformHandler}
+    >
+      {obtainChild()}
     </div>
   );
 }
