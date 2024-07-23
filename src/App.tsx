@@ -1,5 +1,7 @@
 import { useState } from "react";
-import TransformationContainer, { Transformable } from "./components/TransformationContainer";
+import TransformationContainer, {
+  Transformable,
+} from "./components/TransformationContainer";
 import solvePostfix from "./services/expressionSolver/postfixSolver";
 import ShuntingYard from "./services/expressionSolver/ShuntingYard";
 import SVGFunctionGrapher from "./components/SVGFunctionGrapher";
@@ -11,8 +13,8 @@ const integralSolvers = [MidpointRemannSum, TrapezoidalRule, SimpsonRule];
 
 function App() {
   const [expression, setExpression] = useState("");
-  const [from, setFrom] = useState(0);
-  const [to, setTo] = useState(9);
+  const [integralFrom, setIntegralFrom] = useState(0);
+  const [integralTo, setIntegralTo] = useState(9);
   const [divisions, setDivisions] = useState(5);
   const [integralSolver, setIntegralSolver] = useState(0);
   const [integral, setIntegral] = useState(0);
@@ -30,34 +32,66 @@ function App() {
     return express;
   };
 
-  const buildGraph = (itemProps : Transformable) => {
+  const buildGraph = (itemProps: Transformable) => {
     return (
-      <SVGFunctionGrapher
-        axesProps={{ className: "stroke-cyan-500" }}
-        graphProps={{ className: "stroke-cyan-300 fill-transparent" }}
-        functionPoints={(from, to) => {
-          const res = [];
-          const n = 1000;
-          const deltaX = (to - from) / n;
+      <>
+        <SVGFunctionGrapher
+          axesProps={{ className: "stroke-cyan-500" }}
+          graphProps={{ className: "stroke-cyan-300 fill-transparent" }}
+          functionPoints={(from, to) => {
+            const res = [];
+            const n = 1000;
+            const deltaX = (to - from) / n;
 
-          for (let i = 0; i < n; i++) {
-            try {
-              const ev = solvePostfix(
-                ShuntingYard(parseExpression(expression)),
-                from + deltaX * i
-              ).result;
+            for (let i = 0; i < n; i++) {
+              try {
+                const ev = solvePostfix(
+                  ShuntingYard(parseExpression(expression)),
+                  from + deltaX * i
+                ).result;
 
-              res.push(ev);
-            } catch (e) {
-              console.log(e);
+                res.push(ev);
+              } catch (e) {
+                console.log(e);
+              }
             }
-          }
 
-          return res;
-        }}
+            return res;
+          }}
+          {...itemProps}
+        />
 
-        {...itemProps}
-      />
+        <SVGFunctionGrapher
+          className="absolute top-0"
+          axesProps={{ className: "" }}
+          graphProps={{ className: "fill-cyan-300" }}
+          functionPoints={(from, to) => {
+            const res = [];
+            const n = 1000;
+            const deltaX = (to - from) / n;
+
+            for (let i = 0; i < n; i++) {
+              try {
+                let ev = 0;
+                const x = from + deltaX * i;
+
+                if (x > integralFrom && x < integralTo) {
+                  ev = solvePostfix(
+                    ShuntingYard(parseExpression(expression)),
+                    from + deltaX * i
+                  ).result;
+                }
+                res.push(ev);
+              } catch (e) {
+                console.log(e);
+              }
+            }
+
+            return res;
+          }}
+          {...itemProps}
+        />
+      </>
     );
   };
 
@@ -71,13 +105,13 @@ function App() {
               className="text-sm"
               type="text"
               id="to"
-              defaultValue={to}
-              min={from}
+              defaultValue={integralTo}
+              min={integralFrom}
               onChange={(event) => {
                 const target = event.target;
-                const value = Math.max(parseFloat(target.value), from);
+                const value = Math.max(parseFloat(target.value), integralFrom);
                 if (!isNaN(value)) {
-                  setTo(value);
+                  setIntegralTo(value);
                 }
 
                 target.style.width = "0px";
@@ -85,7 +119,7 @@ function App() {
               }}
               onBlur={(event) => {
                 const target = event.target;
-                target.value = to + "";
+                target.value = integralTo + "";
                 target.style.width = "0px";
                 target.style.width = target.scrollWidth + "px";
               }}
@@ -111,13 +145,13 @@ function App() {
               className="text-sm"
               type="text"
               id="from"
-              defaultValue={from}
-              max={to}
+              defaultValue={integralFrom}
+              max={integralTo}
               onChange={(event) => {
                 const target = event.target;
-                const value = Math.min(parseFloat(target.value), to);
+                const value = Math.min(parseFloat(target.value), integralTo);
                 if (!isNaN(value)) {
-                  setFrom(value);
+                  setIntegralFrom(value);
                 }
 
                 target.style.width = "0px";
@@ -125,7 +159,7 @@ function App() {
               }}
               onBlur={(event) => {
                 const target = event.target;
-                target.value = from + "";
+                target.value = integralFrom + "";
                 target.style.width = "0px";
                 target.style.width = target.scrollWidth + "px";
               }}
@@ -215,8 +249,8 @@ function App() {
                   (x) => {
                     return solvePostfix(exp, x).result;
                   },
-                  from,
-                  to,
+                  integralFrom,
+                  integralTo,
                   divisions
                 )
               );
