@@ -1,13 +1,10 @@
 import { useState } from "react";
-import TransformationContainer, {
-  Transformable,
-} from "./components/TransformationContainer";
 import solvePostfix from "./services/expressionSolver/postfixSolver";
 import ShuntingYard from "./services/expressionSolver/ShuntingYard";
-import SVGFunctionGrapher from "./components/SVGFunctionGrapher";
 import MidpointRemannSum from "./services/integralSolver/midpointRiemannRule";
 import SimpsonRule from "./services/integralSolver/SimpsonRule";
 import TrapezoidalRule from "./services/integralSolver/trapezoidalRule";
+import IntegralGrapher from "./components/IntegralGrapher";
 
 const integralSolvers = [MidpointRemannSum, TrapezoidalRule, SimpsonRule];
 
@@ -30,69 +27,6 @@ function App() {
     }
 
     return express;
-  };
-
-  const buildGraph = (itemProps: Transformable) => {
-    return (
-      <>
-        <SVGFunctionGrapher
-          axesProps={{ className: "stroke-cyan-500" }}
-          graphProps={{ className: "stroke-cyan-300 fill-transparent" }}
-          functionPoints={(from, to) => {
-            const res = [];
-            const n = 1000;
-            const deltaX = (to - from) / n;
-
-            for (let i = 0; i < n; i++) {
-              try {
-                const ev = solvePostfix(
-                  ShuntingYard(parseExpression(expression)),
-                  from + deltaX * i
-                ).result;
-
-                res.push(ev);
-              } catch (e) {
-                console.log(e);
-              }
-            }
-
-            return res;
-          }}
-          {...itemProps}
-        />
-
-        <SVGFunctionGrapher
-          className="absolute top-0"
-          axesProps={{ className: "" }}
-          graphProps={{ className: "fill-cyan-300" }}
-          functionPoints={(from, to) => {
-            const res = [];
-            const n = 1000;
-            const deltaX = (to - from) / n;
-
-            for (let i = 0; i < n; i++) {
-              try {
-                let ev = 0;
-                const x = from + deltaX * i;
-
-                if (x > integralFrom && x < integralTo) {
-                  ev = solvePostfix(
-                    ShuntingYard(parseExpression(expression)),
-                    from + deltaX * i
-                  ).result;
-                }
-                res.push(ev);
-              } catch (e) {
-                console.log(e);
-              }
-            }
-
-            return res;
-          }}
-          {...itemProps}
-        />
-      </>
-    );
   };
 
   return (
@@ -261,9 +195,10 @@ function App() {
         </div>
 
         <div className="box-content col-start-2 row-span-2 row-start-1 border-2 mx-auto bg-cyan-950 border-cyan-500 w-full aspect-square">
-          <TransformationContainer
-            className="relative"
-            renderItem={buildGraph}
+          <IntegralGrapher
+            parsedExpression={parseExpression(expression)}
+            integralFrom={integralFrom}
+            integralTo={integralTo}
           />
         </div>
       </section>
