@@ -6,15 +6,37 @@ import SimpsonRule from "./services/integralSolver/SimpsonRule";
 import TrapezoidalRule from "./services/integralSolver/trapezoidalRule";
 import IntegralGrapher from "./components/IntegralGrapher";
 
-const integralSolvers = [MidpointRemannSum, TrapezoidalRule, SimpsonRule];
+const integralSolvers = {
+  midpoint: MidpointRemannSum,
+  trapezoidal: TrapezoidalRule,
+  simpsons: SimpsonRule,
+};
+
+type FormFields = {
+  expression: string;
+  integralFrom: number;
+  integralTo: number;
+  divisions: number;
+  integralSolver: "midpoint" | "trapezoidal" | "simpsons";
+};
+
+const initialForm: FormFields = {
+  expression: "",
+  integralFrom: 0,
+  integralTo: 9,
+  divisions: 5,
+  integralSolver: "midpoint",
+};
+
+const adaptInputWidth = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const target = event.target;
+
+  target.style.width = "0px";
+  target.style.width = target.scrollWidth + "px";
+};
 
 function App() {
-  const [expression, setExpression] = useState("");
-  const [integralFrom, setIntegralFrom] = useState(0);
-  const [integralTo, setIntegralTo] = useState(9);
-  const [divisions, setDivisions] = useState(5);
-  const [integralSolver, setIntegralSolver] = useState(0);
-  const [integral, setIntegral] = useState(0);
+  const [form, setForm] = useState<FormFields>(initialForm);
 
   const parseExpression = (exp: string) => {
     const modexp = exp.replace(/(?<=[+\-*/^()]|^)-/g, "!");
@@ -30,175 +52,130 @@ function App() {
   };
 
   return (
-    <main className="flex items-center justify-center container lg:px-5 mx-auto h-[100svh]">
-      <section className="p-8 my-auto bg-cyan-800 w-full lg:w-fit lg:grid lg:grid-rows-[auto_auto] lg:grid-cols-[30rem_20rem] gap-8">
-        <div className="flex font-math font-normal h-min">
-          <h1 className="mb-4 mr-2 text-7xl">∫</h1>
-          <div className="flex-col">
-            <input
-              className="text-sm"
-              type="text"
-              id="to"
-              defaultValue={integralTo}
-              min={integralFrom}
-              onChange={(event) => {
-                const target = event.target;
-                const value = Math.max(parseFloat(target.value), integralFrom);
-                if (!isNaN(value)) {
-                  setIntegralTo(value);
-                }
-
-                target.style.width = "0px";
-                target.style.width = target.scrollWidth + "px";
-              }}
-              onBlur={(event) => {
-                const target = event.target;
-                target.value = integralTo + "";
-                target.style.width = "0px";
-                target.style.width = target.scrollWidth + "px";
-              }}
-            />
-            <div className="flex flex-wrap my-auto text-xl w-fit">
-              <input
-                className="p-0"
-                type="text"
-                id="expression"
-                onBlur={(event) => {
-                  setExpression(event.target.value);
-                }}
-                onChange={(event) => {
-                  const target = event.target;
-                  target.style.width = "0px";
-                  target.style.width = target.scrollWidth + "px";
-                }}
-              />
-              <p className="ml-1">dx</p>
-              <p className="ml-1 shrink-0"> ≈ {integral}</p>
-            </div>
-            <input
-              className="text-sm"
-              type="text"
-              id="from"
-              defaultValue={integralFrom}
-              max={integralTo}
-              onChange={(event) => {
-                const target = event.target;
-                const value = Math.min(parseFloat(target.value), integralTo);
-                if (!isNaN(value)) {
-                  setIntegralFrom(value);
-                }
-
-                target.style.width = "0px";
-                target.style.width = target.scrollWidth + "px";
-              }}
-              onBlur={(event) => {
-                const target = event.target;
-                target.value = integralFrom + "";
-                target.style.width = "0px";
-                target.style.width = target.scrollWidth + "px";
-              }}
-            />
-          </div>
-        </div>
-
-        <div className="col-start-1 my-8 ">
-          <h1 className="text-xl font-medium">Numerical Integration:</h1>
-          <label className="pr-1 text-end" htmlFor="to">
-            n =
-          </label>
-          <input
-            type="text"
-            id="divisions"
-            className="bg-transparent"
-            min={integralSolver === 2 ? 2 : 1}
-            step={integralSolver === 2 ? 2 : 1}
-            defaultValue={divisions}
-            onChange={(event) => {
-              const target = event.target;
-              let value = Math.max(parseInt(target.value), 1);
-
-              if (!isNaN(value)) {
-                if (integralSolver === 2) {
-                  value += value % 2;
-                }
-
-                setDivisions(value);
+    <main className="container mx-auto flex h-[100svh] items-center justify-center lg:px-5">
+      <section className="my-auto w-full gap-8 bg-cyan-800 p-8 lg:grid lg:w-fit lg:grid-cols-[30rem_20rem] lg:grid-rows-[auto_auto]">
+        <form
+          action="/"
+          onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            const getNamedItem = (name: string) => {
+              const control = event.currentTarget.elements.namedItem(name);
+              if (!control || !("value" in control)) {
+                throw new Error(`Valid form control ${name} not found`);
               }
 
-              target.style.width = "0px";
-              target.style.width = target.scrollWidth + "px";
-            }}
-            onBlur={(event) => {
-              const target = event.target;
-              target.value = divisions + "";
-              target.style.width = "0px";
-              target.style.width = target.scrollWidth + "px";
-            }}
-          />
-          <div className="">
-            <input
-              type="radio"
-              checked={integralSolver === 0}
-              onChange={() => setIntegralSolver(0)}
-              id="midpoint"
-            />
-            <label className="cursor-pointer" htmlFor="midpoint">
-              Midpoint Riemann's Rule
-            </label>
+              return control;
+            };
+
+            const integralSolver = getNamedItem("integralSolver").value;
+
+            setForm({
+              expression: getNamedItem("expression").value,
+              integralFrom: Number.parseInt(getNamedItem("integralFrom").value),
+              integralTo: Number.parseInt(getNamedItem("integralTo").value),
+              divisions: Number.parseInt(getNamedItem("divisions").value),
+              integralSolver: integralSolver as
+                | "midpoint"
+                | "trapezoidal"
+                | "simpsons",
+            });
+          }}
+        >
+          <div className="flex h-min font-math font-normal">
+            <p className="mb-4 mr-2 text-7xl">∫</p>
+            <div className="flex-col">
+              <input
+                className="text-sm"
+                type="text"
+                name="integralTo"
+                defaultValue={initialForm.integralTo}
+                onChange={adaptInputWidth}
+              />
+              <div className="my-auto flex w-fit flex-wrap text-xl">
+                <input
+                  className="p-0"
+                  type="text"
+                  name="expression"
+                  defaultValue={initialForm.expression}
+                  onChange={adaptInputWidth}
+                />
+                <p className="ml-1">dx</p>
+                <p className="ml-1 shrink-0">
+                  {" ≈ "}
+                  {integralSolvers[form.integralSolver](
+                    (x) =>
+                      solvePostfix(
+                        ShuntingYard(parseExpression(form.expression)),
+                        x,
+                      ).result,
+                    form.integralFrom,
+                    form.integralTo,
+                    form.divisions,
+                  )}
+                </p>
+              </div>
+              <input
+                className="text-sm"
+                type="text"
+                name="integralFrom"
+                defaultValue={initialForm.integralFrom}
+                onChange={adaptInputWidth}
+              />
+            </div>
           </div>
 
-          <div className="">
-            <input
-              type="radio"
-              checked={integralSolver === 1}
-              onChange={() => setIntegralSolver(1)}
-              id="trapezoidal"
-            />
-            <label className="cursor-pointer" htmlFor="trapezoidal">
-              Trapezoidal Rule
+          <div className="col-start-1 my-8">
+            <h1 className="text-xl font-medium">Numerical Integration:</h1>
+            <label className="pr-1 text-end" htmlFor="to">
+              n =
             </label>
-          </div>
-
-          <div className="">
             <input
-              type="radio"
-              checked={integralSolver === 2}
-              onChange={() => {
-                setIntegralSolver(2);
-                setDivisions(divisions + (divisions % 2));
-              }}
-              id="simpson"
+              type="text"
+              name="divisions"
+              className="bg-transparent"
+              defaultValue={initialForm.divisions}
+              onChange={adaptInputWidth}
             />
-            <label className="cursor-pointer" htmlFor="simpson">
-              Simpson's Rule
-            </label>
+            <div className="">
+              <label className="cursor-pointer">
+                <input
+                  type="radio"
+                  name="integralSolver"
+                  value="midpoint"
+                  defaultChecked
+                />
+                <i>Midpoint Riemann's Rule</i>
+              </label>
+            </div>
+
+            <div className="">
+              <label className="cursor-pointer">
+                <input type="radio" name="integralSolver" value="trapezoidal" />
+                <i>Trapezoidal Rule</i>
+              </label>
+            </div>
+
+            <div className="">
+              <label className="cursor-pointer">
+                <input type="radio" name="integralSolver" value="simpsons" />
+                <i>Simpson's Rule</i>
+              </label>
+            </div>
+
+            <button
+              className="mt-2 w-full bg-cyan-950 py-2 transition-colors hover:bg-cyan-300 hover:text-cyan-900 active:bg-cyan-200 active:text-cyan-900"
+              type="submit"
+            >
+              Calculate
+            </button>
           </div>
+        </form>
 
-          <button
-            className="w-full bg-cyan-950 hover:bg-cyan-300 hover:text-cyan-900 active:bg-cyan-200 active:text-cyan-900 transition-colors py-2 mt-2"
-            onClick={() => {
-              const exp = ShuntingYard(parseExpression(expression));
-              setIntegral(
-                integralSolvers[integralSolver](
-                  (x) => {
-                    return solvePostfix(exp, x).result;
-                  },
-                  integralFrom,
-                  integralTo,
-                  divisions
-                )
-              );
-            }}
-          >
-            Calculate
-          </button>
-        </div>
-
-        <div className="box-content col-start-2 row-span-2 row-start-1 border-2 mx-auto bg-cyan-950 border-cyan-500 w-full aspect-square">
+        <div className="col-start-2 row-span-2 row-start-1 mx-auto box-content aspect-square w-full border-2 border-cyan-500 bg-cyan-950">
           <IntegralGrapher
-            parsedExpression={parseExpression(expression)}
-            integralFrom={integralFrom}
-            integralTo={integralTo}
+            parsedExpression={parseExpression(form.expression)}
+            integralFrom={form.integralFrom}
+            integralTo={form.integralTo}
           />
         </div>
       </section>
