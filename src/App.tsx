@@ -1,5 +1,5 @@
 import { useState } from "react";
-import SVGGraphTransformator from "./components/SVGGRaphTransformator";
+import TransformationContainer, { Transformable } from "./components/TransformationContainer";
 import solvePostfix from "./services/expressionSolver/postfixSolver";
 import ShuntingYard from "./services/expressionSolver/ShuntingYard";
 import SVGFunctionGrapher from "./components/SVGFunctionGrapher";
@@ -16,7 +16,6 @@ function App() {
   const [divisions, setDivisions] = useState(5);
   const [integralSolver, setIntegralSolver] = useState(0);
   const [integral, setIntegral] = useState(0);
-  const [graphNode, setGraphNode] = useState<React.JSX.Element>(<></>);
 
   const parseExpression = (exp: string) => {
     const modexp = exp.replace(/(?<=[+\-*/^()]|^)-/g, "!");
@@ -31,15 +30,9 @@ function App() {
     return express;
   };
 
-  const buildGraph = () => {
+  const buildGraph = (itemProps : Transformable) => {
     return (
       <SVGFunctionGrapher
-        width={0}
-        height={0}
-        scale={90}
-        position={{ x: 0, y: 0 }}
-        from={from}
-        to={to}
         axesProps={{ className: "stroke-cyan-500" }}
         graphProps={{ className: "stroke-cyan-300 fill-transparent" }}
         functionPoints={(from, to) => {
@@ -62,6 +55,8 @@ function App() {
 
           return res;
         }}
+
+        {...itemProps}
       />
     );
   };
@@ -214,7 +209,6 @@ function App() {
           <button
             className="w-full bg-cyan-950 hover:bg-cyan-300 hover:text-cyan-900 active:bg-cyan-200 active:text-cyan-900 transition-colors py-2 mt-2"
             onClick={() => {
-              setGraphNode(buildGraph());
               const exp = ShuntingYard(parseExpression(expression));
               setIntegral(
                 integralSolvers[integralSolver](
@@ -233,9 +227,10 @@ function App() {
         </div>
 
         <div className="box-content col-start-2 row-span-2 row-start-1 border-2 mx-auto bg-cyan-950 border-cyan-500 w-full aspect-square">
-          <SVGGraphTransformator className="relative">
-            {graphNode}
-          </SVGGraphTransformator>
+          <TransformationContainer
+            className="relative"
+            renderItem={buildGraph}
+          />
         </div>
       </section>
     </main>

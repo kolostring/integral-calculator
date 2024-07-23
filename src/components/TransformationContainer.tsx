@@ -1,37 +1,35 @@
 import {
-  ReactElement,
-  cloneElement,
   useLayoutEffect,
   useRef,
   useState,
 } from "react";
-import { SVGFunctionGrapherProps } from "./SVGFunctionGrapher";
 import useTransform from "../hooks/useTransform";
 
-export default function SVGGraphTransformator({
-  children,
+export type Transformable = {
+  scale: number;
+  position: { x: number; y: number };
+  width: number;
+  height: number;
+};
+
+export type TransformationContainer = {
+  renderItem: (itemProps: Transformable) => React.JSX.Element;
+} & React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLDivElement>,
+  HTMLDivElement
+>;
+
+export default function TransformationContainer({
+  renderItem,
   className,
-}: Readonly<{
-  children: ReactElement<SVGFunctionGrapherProps>;
-  className?: string;
-}>) {
+  ...props
+}: TransformationContainer) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [scale, setScale] = useState(10);
   const [height, setHeight] = useState(100);
   const [width, setWidth] = useState(100);
 
   const refContainer = useRef<HTMLDivElement>(null);
-
-  const obtainChild = () => {
-    return cloneElement(children, {
-      scale: scale,
-      position: position,
-      width: width,
-      height: height,
-      from: (position.x - width/2) /scale,
-      to: (position.x + width/2) /scale,
-    });
-  };
 
   const handleScale = (
     zoom: number,
@@ -76,9 +74,9 @@ export default function SVGGraphTransformator({
     <div
       ref={refContainer}
       className={`${className} touch-none h-full w-full`}
-      {...transformHandler}
+      {...{ ...props, ...transformHandler }}
     >
-      {obtainChild()}
+      {renderItem({ height, position, scale, width })}
     </div>
   );
 }

@@ -1,29 +1,26 @@
 import { useCallback } from "react";
+import { Transformable } from "./TransformationContainer";
 
 export type SVGFunctionGrapherProps = {
   functionPoints: (from: number, to: number) => number[];
-  from: number;
-  to: number;
-  width: number;
-  height: number;
-  scale: number;
-  position: { x: number; y: number };
-  axesProps: React.SVGAttributes<SVGPathElement>;
-  graphProps: React.SVGAttributes<SVGPathElement>;
-} & React.HTMLAttributes<SVGElement>;
+  axesProps?: React.SVGAttributes<SVGPathElement>;
+  graphProps?: React.SVGAttributes<SVGPathElement>;
+} & React.HTMLAttributes<SVGElement> &
+  Transformable;
 
 export default function SVGFunctionGrapher({
   functionPoints,
-  from,
-  to,
-  scale,
-  width,
-  height,
-  position,
+  scale = 10,
+  width = 0,
+  height = 0,
+  position = { x: 0, y: 0 },
   axesProps,
   graphProps,
   ...props
 }: Readonly<SVGFunctionGrapherProps>) {
+  const from = (position.x - width / 2) / scale;
+  const to = (position.x + width / 2) / scale;
+
   const axesPathD = () => {
     return `M ${-position.x} ${-height} V ${height} M ${-width} ${-position.y} H ${width} `;
   };
@@ -47,7 +44,7 @@ export default function SVGFunctionGrapher({
 
     path += `V ${-position.y}`;
     return path;
-  }, [from, to, position, scale, functionPoints])
+  }, [from, to, position, scale, functionPoints]);
 
   return (
     <svg viewBox={`${-width / 2} ${-height / 2} ${width} ${height}`} {...props}>
