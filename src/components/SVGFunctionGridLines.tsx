@@ -5,6 +5,7 @@ export type SVGFunctionGridLinesProps = {
   numbersClassName?: string;
   strokeClassName?: string;
   axisClassName?: string;
+  breakPointFactor: number;
 } & Transformable &
   React.SVGProps<SVGSVGElement>;
 
@@ -16,13 +17,14 @@ export default function SVGFunctionGridLines({
   numbersClassName,
   strokeClassName,
   axisClassName,
-
+  breakPointFactor,
   ...props
 }: Readonly<SVGFunctionGridLinesProps>) {
+
   const deltaX = Math.min(
     Math.max(
       1,
-      Math.trunc(width / scale / 3) - (Math.trunc(width / scale / 3) % 5),
+      Math.trunc(width / scale / breakPointFactor) - (Math.trunc(width / scale / breakPointFactor) % 5),
     ),
     10,
   );
@@ -30,7 +32,7 @@ export default function SVGFunctionGridLines({
   const deltaY = Math.min(
     Math.max(
       1,
-      Math.trunc(height / scale / 3) - (Math.trunc(height / scale / 3) % 5),
+      Math.trunc(height / scale / breakPointFactor) - (Math.trunc(height / scale / breakPointFactor) % 5),
     ),
     10,
   );

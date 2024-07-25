@@ -22,6 +22,7 @@ export default function IntegralGrapher({
       <>
         <SVGFunctionGridLines
           {...itemProps}
+          breakPointFactor={2.3}
           className="pointer-events-none absolute top-0"
           numbersClassName="fill-cyan-700"
           strokeClassName="stroke-cyan-700"
