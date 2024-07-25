@@ -20,9 +20,20 @@ export default function IntegralGrapher({
   const renderGraph = (itemProps: Transformable) => {
     return (
       <>
+        <SVGFunctionGridLines
+          {...itemProps}
+          className="pointer-events-none absolute top-0"
+          numbersClassName="fill-cyan-700"
+          strokeClassName="stroke-cyan-700"
+          axisClassName="stroke-cyan-300"
+        />
+
         <SVGFunctionGrapher
-          axesProps={{ className: "stroke-cyan-500" }}
-          graphProps={{ className: "stroke-cyan-300 fill-transparent" }}
+          className="absolute top-0"
+          axesProps={{ className: "" }}
+          graphProps={{
+            className: "stroke-2 stroke-cyan-200 fill-transparent",
+          }}
           functionPoints={(from, to) => {
             const res = [];
             const n = 1000;
@@ -46,12 +57,10 @@ export default function IntegralGrapher({
           {...itemProps}
         />
 
-        <SVGFunctionGridLines {...itemProps} />
-        
         <SVGFunctionGrapher
           className="absolute top-0"
           axesProps={{ className: "" }}
-          graphProps={{ className: "fill-cyan-300" }}
+          graphProps={{ className: "fill-cyan-300 opacity-20" }}
           functionPoints={(from, to) => {
             const res = [];
             const n = 1000;
