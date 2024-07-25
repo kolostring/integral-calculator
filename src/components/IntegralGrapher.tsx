@@ -1,6 +1,7 @@
 import ShuntingYard from "../services/expressionSolver/ShuntingYard";
 import solvePostfix from "../services/expressionSolver/postfixSolver";
 import SVGFunctionGrapher from "./SVGFunctionGrapher";
+import SVGFunctionGridLines from "./SVGFunctionGridLines";
 import TransformationContainer, {
   Transformable,
 } from "./TransformationContainer";
@@ -31,7 +32,7 @@ export default function IntegralGrapher({
               try {
                 const ev = solvePostfix(
                   ShuntingYard(parsedExpression),
-                  from + deltaX * i
+                  from + deltaX * i,
                 ).result;
 
                 res.push(ev);
@@ -45,6 +46,8 @@ export default function IntegralGrapher({
           {...itemProps}
         />
 
+        <SVGFunctionGridLines {...itemProps} />
+        
         <SVGFunctionGrapher
           className="absolute top-0"
           axesProps={{ className: "" }}
@@ -62,7 +65,7 @@ export default function IntegralGrapher({
                 if (x > integralFrom && x < integralTo) {
                   ev = solvePostfix(
                     ShuntingYard(parsedExpression),
-                    from + deltaX * i
+                    from + deltaX * i,
                   ).result;
                 }
                 res.push(ev);
