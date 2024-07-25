@@ -14,16 +14,11 @@ export default function SVGFunctionGrapher({
   width = 0,
   height = 0,
   position = { x: 0, y: 0 },
-  axesProps,
   graphProps,
   ...props
 }: Readonly<SVGFunctionGrapherProps>) {
   const from = (position.x - width / 2) / scale;
   const to = (position.x + width / 2) / scale;
-
-  const axesPathD = () => {
-    return `M ${-position.x} ${-height} V ${height} M ${-width} ${-position.y} H ${width} `;
-  };
 
   const graphPathD = useCallback(() => {
     let path = "";
@@ -48,7 +43,6 @@ export default function SVGFunctionGrapher({
 
   return (
     <svg viewBox={`${-width / 2} ${-height / 2} ${width} ${height}`} {...props}>
-      <path d={axesPathD()} {...axesProps} />
       <path d={graphPathD()} {...graphProps} />
     </svg>
   );
