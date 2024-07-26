@@ -51,36 +51,41 @@ function App() {
     return express;
   };
 
+  const getNamedItem = (
+    formElements: HTMLFormControlsCollection,
+    name: string,
+  ) => {
+    const control = formElements.namedItem(name);
+    if (!control || !("value" in control)) {
+      throw new Error(`Valid form control of name: "${name}" not found`);
+    }
+
+    return control;
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const formElements = event.currentTarget.elements;
+    const integralSolver = getNamedItem(formElements, "integralSolver").value;
+
+    setForm({
+      expression: getNamedItem(formElements, "expression").value,
+      integralFrom: Number.parseFloat(
+        getNamedItem(formElements, "integralFrom").value,
+      ),
+      integralTo: Number.parseFloat(
+        getNamedItem(formElements, "integralTo").value,
+      ),
+      divisions: Number.parseInt(getNamedItem(formElements, "divisions").value),
+      integralSolver: integralSolver as "midpoint" | "trapezoidal" | "simpsons",
+    });
+  };
+
   return (
     <main className="container mx-auto flex h-[100svh] items-center justify-center lg:px-5">
       <section className="my-auto w-full gap-8 bg-cyan-800 p-8 lg:grid lg:w-fit lg:grid-cols-[30rem_20rem] lg:grid-rows-[auto_auto]">
-        <form
-          action="/"
-          onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
-            event.preventDefault();
-            const getNamedItem = (name: string) => {
-              const control = event.currentTarget.elements.namedItem(name);
-              if (!control || !("value" in control)) {
-                throw new Error(`Valid form control ${name} not found`);
-              }
-
-              return control;
-            };
-
-            const integralSolver = getNamedItem("integralSolver").value;
-
-            setForm({
-              expression: getNamedItem("expression").value,
-              integralFrom: Number.parseInt(getNamedItem("integralFrom").value),
-              integralTo: Number.parseInt(getNamedItem("integralTo").value),
-              divisions: Number.parseInt(getNamedItem("divisions").value),
-              integralSolver: integralSolver as
-                | "midpoint"
-                | "trapezoidal"
-                | "simpsons",
-            });
-          }}
-        >
+        <form action="/" onSubmit={handleSubmit}>
           <div className="flex h-min font-math font-normal">
             <p className="mb-4 mr-2 text-7xl">∫</p>
             <div className="flex-col">
@@ -125,7 +130,7 @@ function App() {
           </div>
 
           <div className="col-start-1 my-8">
-            <h1 className="text-xl font-medium">Numerical Integration:</h1>
+            <h2 className="text-xl font-medium">Numerical Integration:</h2>
             <label className="pr-1 text-end" htmlFor="to">
               n =
             </label>
