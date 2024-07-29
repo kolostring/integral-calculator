@@ -49,10 +49,9 @@ export default function SVGFunctionGridLines({
         const pos = (deltaX * index + (offsetX - (offsetX % deltaX))) * scale;
 
         return (
-          <>
+          <g key={pos}>
             <text
               className={numbersClassName}
-              key={pos}
               x={`${pos}`}
               y={`${offsetY * scale + 20}`}
             >
@@ -62,7 +61,7 @@ export default function SVGFunctionGridLines({
               className={`${pos == 0? axisClassName: strokeClassName}`}
               d={`M ${pos} ${position.y - height / 2} V ${position.y + height}`}
             />
-          </>
+          </g>
         );
       })}
 
@@ -70,20 +69,19 @@ export default function SVGFunctionGridLines({
         const pos = (deltaY * index + (offsetY - (offsetY % deltaY))) * scale;
 
         return (
-          <>
+          <g key={pos}>
             <text
               className={numbersClassName}
-              key={pos}
               x={`${offsetX * scale + 20}`}
               y={`${pos}`}
             >
-              {Math.ceil(deltaY * index + offsetY - (offsetY % deltaY))}
+              {-Math.ceil(deltaY * index + offsetY - (offsetY % deltaY))}
             </text>
             <path
               className={`${pos == 0? axisClassName: strokeClassName}`}
               d={`M ${position.x - width / 2} ${pos} H ${width + position.x}`}
             />
-          </>
+          </g>
         );
       })}
     </svg>
