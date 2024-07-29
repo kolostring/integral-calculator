@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 
-export default function useZoom(
-  onZoom: (zoom: number, origin: { x: number; y: number }) => void,
-  wheelZoomMul: number = 1.2,
-) {
+export type useZoomProps = {
+  onZoom: (zoom: number, origin: { x: number; y: number }) => void;
+  wheelZoomMul: number;
+};
+
+export default function useZoom({ onZoom, wheelZoomMul }: useZoomProps) {
   const [lastPinchDistance, setLastPinchDistance] = useState(1);
 
   const handleTouchStart = (event: React.TouchEvent) => {

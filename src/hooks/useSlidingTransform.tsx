@@ -1,20 +1,26 @@
 import { useCallback, useLayoutEffect, useRef } from "react";
-import useTransform from "./useTransform";
+import useTransform, { useTransformProps } from "./useTransform";
 import lerp from "../utils/lerp";
 
-export default function useSlidingTransform(
-  onTranslate: (x: number, y: number) => void,
-  onZoom: (zoom: number, origin: { x: number; y: number }) => void,
-  WheelZoomMul: number = 1.2,
-  slidingAlpha: number = 0.07,
-) {
-  const isTranslating = useRef<boolean>(false);
+export type useSlidingTransformProps = {
+  slidingAlpha: number;
+} & useTransformProps;
+
+export default function useSlidingTransform({
+  onTranslate,
+  onTranslateStart,
+  onTranslateEnd,
+  onZoom,
+  wheelZoomMul,
+  slidingAlpha,
+}: useSlidingTransformProps) {
+  const isTranslating = useRef<boolean>(true);
   const lastTranslate = useRef<{ x: number; y: number }>({
     x: 0,
     y: 0,
   });
 
-  const onAcceleratedTranslate = useCallback(
+  const onSlidingTranslate = useCallback(
     (x: number, y: number) => {
       lastTranslate.current = {
         x: lerp(x, lastTranslate.current.x, 0.5),
@@ -22,45 +28,33 @@ export default function useSlidingTransform(
       };
       onTranslate(x, y);
     },
-    [onTranslate, slidingAlpha],
+    [onTranslate],
   );
 
-  const transformHandler = useTransform(
-    onAcceleratedTranslate,
-    onZoom,
-    WheelZoomMul,
-  );
-
-  const onTranslateStart = (
-    translateStartCallback: (
-      event: React.TouchEvent | React.MouseEvent,
-    ) => void,
+  const onSlidingTranslateStart = (
+    event: React.TouchEvent | React.MouseEvent,
   ) => {
-    return (event: React.TouchEvent | React.MouseEvent) => {
-      translateStartCallback(event);
-      isTranslating.current = true;
-    };
+    isTranslating.current = true;
+    if (onTranslateStart) onTranslateStart(event);
   };
 
-  const onTranslateEnd = (
-    translateEndCallback: (event: React.TouchEvent | React.MouseEvent) => void,
+  const onSlidingTranslateEnd = (
+    event: React.TouchEvent | React.MouseEvent,
   ) => {
-    return (event: React.TouchEvent | React.MouseEvent) => {
-      translateEndCallback(event);
-      isTranslating.current = false;
-    };
+    isTranslating.current = false;
+    if (onTranslateEnd) onTranslateEnd(event);
   };
 
   const animate = useCallback(() => {
     if (!isTranslating.current) {
-      onAcceleratedTranslate(
+      onSlidingTranslate(
         lerp(lastTranslate.current.x, 0, slidingAlpha),
         lerp(lastTranslate.current.y, 0, slidingAlpha),
       );
     } else {
       lastTranslate.current = { x: 0, y: 0 };
     }
-  }, [onAcceleratedTranslate, slidingAlpha]);
+  }, [onSlidingTranslate, slidingAlpha]);
 
   useLayoutEffect(() => {
     const requestID = setInterval(animate, 10);
@@ -69,27 +63,11 @@ export default function useSlidingTransform(
     };
   }, [animate]);
 
-  return {
-    ...transformHandler,
-    onTouchStart: onTranslateStart(
-      transformHandler.onTouchStart as (
-        event: React.TouchEvent | React.MouseEvent,
-      ) => void,
-    ),
-    onMouseDown: onTranslateStart(
-      transformHandler.onMouseDown as (
-        event: React.TouchEvent | React.MouseEvent,
-      ) => void,
-    ),
-    onTouchEnd: onTranslateEnd(
-      transformHandler.onTouchEnd as (
-        event: React.TouchEvent | React.MouseEvent,
-      ) => void,
-    ),
-    onMouseUp: onTranslateEnd(
-      transformHandler.onMouseUp as (
-        event: React.TouchEvent | React.MouseEvent,
-      ) => void,
-    ),
-  };
+  return useTransform({
+    onTranslate: onSlidingTranslate,
+    onTranslateStart: onSlidingTranslateStart,
+    onTranslateEnd: onSlidingTranslateEnd,
+    onZoom,
+    wheelZoomMul,
+  });
 }

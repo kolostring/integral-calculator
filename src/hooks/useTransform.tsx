@@ -1,13 +1,21 @@
-import useTranslate from "./useTranslate";
-import useZoom from "./useZoom";
+import useTranslate, { useTranslateProps } from "./useTranslate";
+import useZoom, { useZoomProps } from "./useZoom";
 
-export default function useTransform(
-  onTranslate: (x: number, y: number) => void,
-  onZoom: (zoom: number, origin: { x: number; y: number }) => void,
-  WheelZoomMul: number = 1.2,
-) {
-  const translateHandler = useTranslate(onTranslate);
-  const zoomHandler = useZoom(onZoom, WheelZoomMul);
+export type useTransformProps = useTranslateProps & useZoomProps;
+
+export default function useTransform({
+  onTranslate,
+  onTranslateStart,
+  onTranslateEnd,
+  onZoom,
+  wheelZoomMul,
+}: useTransformProps) {
+  const translateHandler = useTranslate({
+    onTranslate,
+    onTranslateStart,
+    onTranslateEnd,
+  });
+  const zoomHandler = useZoom({ onZoom, wheelZoomMul });
 
   const handleTouchStart = (event: React.TouchEvent) => {
     translateHandler.onTouchStart(event);

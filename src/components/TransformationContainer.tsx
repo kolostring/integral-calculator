@@ -63,7 +63,12 @@ export default function TransformationContainer({
     setPosition({ x: position.x + x, y: position.y + y });
   };
 
-  const transformHandler = useSlidingTransform(handlePosition, handleScale);
+  const transformHandler = useSlidingTransform({
+    onTranslate: handlePosition,
+    onZoom: handleScale,
+    wheelZoomMul: 1.1,
+    slidingAlpha: 0.07,
+  });
 
   useLayoutEffect(() => {
     const updateSize = () => {
