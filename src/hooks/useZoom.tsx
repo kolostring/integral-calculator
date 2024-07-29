@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 
 export default function useZoom(
-  onZoom: (zoom: number, origin: { x: number; y: number }) => void
+  onZoom: (zoom: number, origin: { x: number; y: number }) => void,
+  wheelZoomMul: number = 1.2,
 ) {
   const [lastPinchDistance, setLastPinchDistance] = useState(1);
 
@@ -22,14 +23,20 @@ export default function useZoom(
     const pos = obtainPinchCenter(event.touches);
     const targetRect = event.currentTarget.getBoundingClientRect();
 
-    onZoom(delta / 15, obtainAbsoluteOrigin(pos, targetRect));
+    onZoom(
+      (Math.abs(delta / 100) + 1) * Math.sign(delta),
+      obtainAbsoluteOrigin(pos, targetRect),
+    );
   };
 
   const handleWheel = (event: React.WheelEvent) => {
     const pos = { x: event.clientX, y: event.clientY };
     const targetRect = event.currentTarget.getBoundingClientRect();
 
-    onZoom(Math.sign(-event.deltaY), obtainAbsoluteOrigin(pos, targetRect));
+    onZoom(
+      Math.sign(-event.deltaY) * wheelZoomMul,
+      obtainAbsoluteOrigin(pos, targetRect),
+    );
   };
 
   const obtainPinchDistance = (touches: React.TouchList) => {
@@ -37,7 +44,7 @@ export default function useZoom(
     const touch2 = touches.item(1);
     return Math.hypot(
       touch1.clientX - touch2.clientX,
-      touch1.clientY - touch2.clientY
+      touch1.clientY - touch2.clientY,
     );
   };
 
@@ -52,7 +59,7 @@ export default function useZoom(
 
   const obtainAbsoluteOrigin = (
     pos: { x: number; y: number },
-    targetRect: DOMRect
+    targetRect: DOMRect,
   ) => {
     const origin = {
       x: pos.x - targetRect.left - targetRect.width / 2,

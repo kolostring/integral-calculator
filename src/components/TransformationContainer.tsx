@@ -1,8 +1,4 @@
-import {
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import useTransform from "../hooks/useTransform";
 
 export type Transformable = {
@@ -14,6 +10,8 @@ export type Transformable = {
 
 export type TransformationContainer = {
   renderItem: (itemProps: Transformable) => React.JSX.Element;
+  minScale: number;
+  maxScale: number;
 } & React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLDivElement>,
   HTMLDivElement
@@ -22,6 +20,8 @@ export type TransformationContainer = {
 export default function TransformationContainer({
   renderItem,
   className,
+  minScale,
+  maxScale,
   ...props
 }: TransformationContainer) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -33,16 +33,29 @@ export default function TransformationContainer({
 
   const handleScale = (
     zoom: number,
-    absoluteOrigin: { x: number; y: number }
+    absoluteOrigin: { x: number; y: number },
   ) => {
-    setScale(Math.max(Math.abs(scale + zoom), 5));
-
+    const scaleMul = Math.abs(zoom);
     if (zoom !== 0) {
-      const zoomMult = zoom / scale;
-      setPosition({
-        x: position.x + (position.x + absoluteOrigin.x) * zoomMult,
-        y: position.y + (position.y + absoluteOrigin.y) * zoomMult,
-      });
+      const newScale = scale * (zoom > 0 ? scaleMul : 1 / scaleMul);
+
+      if (newScale < minScale || newScale > maxScale) {
+        return;
+      }
+
+      const offset = {
+        x:
+          position.x + 
+          (position.x + absoluteOrigin.x) *
+            (zoom > 0 ? scaleMul - 1 : -(1 - 1 / scaleMul)),
+        y:
+          position.y + 
+          (position.y + absoluteOrigin.y) *
+            (zoom > 0 ? scaleMul - 1 : -(1 - 1 / scaleMul)),
+      };
+
+      setScale(newScale);
+      setPosition(offset);
     }
   };
 
@@ -73,7 +86,7 @@ export default function TransformationContainer({
   return (
     <div
       ref={refContainer}
-      className={`${className} touch-none h-full w-full`}
+      className={`${className} h-full w-full cursor-move touch-none`}
       {...{ ...props, ...transformHandler }}
     >
       {renderItem({ height, position, scale, width })}

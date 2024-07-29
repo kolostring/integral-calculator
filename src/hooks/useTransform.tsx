@@ -4,10 +4,10 @@ import useZoom from "./useZoom";
 export default function useTransform(
   onTranslate: (x: number, y: number) => void,
   onZoom: (zoom: number, origin: { x: number; y: number }) => void,
+  WheelZoomMul: number = 1.2,
 ) {
   const translateHandler = useTranslate(onTranslate);
-  const zoomHandler = useZoom(onZoom);
-
+  const zoomHandler = useZoom(onZoom, WheelZoomMul);
 
   const handleTouchStart = (event: React.TouchEvent) => {
     translateHandler.onTouchStart(event);

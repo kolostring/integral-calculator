@@ -22,7 +22,7 @@ export default function IntegralGrapher({
       <>
         <SVGFunctionGridLines
           {...itemProps}
-          breakPointFactor={2.3}
+          breakPointFactor={4.2}
           className="pointer-events-none absolute top-0"
           numbersClassName="fill-cyan-700"
           strokeClassName="stroke-cyan-700"
@@ -31,7 +31,6 @@ export default function IntegralGrapher({
 
         <SVGFunctionGrapher
           className="absolute top-0"
-          axesProps={{ className: "" }}
           graphProps={{
             className: "stroke-2 stroke-cyan-200 fill-transparent",
           }}
@@ -60,7 +59,6 @@ export default function IntegralGrapher({
 
         <SVGFunctionGrapher
           className="absolute top-0"
-          axesProps={{ className: "" }}
           graphProps={{ className: "fill-cyan-300 opacity-20" }}
           functionPoints={(from, to) => {
             const res = [];
@@ -93,6 +91,11 @@ export default function IntegralGrapher({
   };
 
   return (
-    <TransformationContainer className="relative" renderItem={renderGraph} />
+    <TransformationContainer
+      className="relative"
+      renderItem={renderGraph}
+      minScale={3}
+      maxScale={45}
+    />
   );
 }
