@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 export default function useTranslate(
-  onTranslate: (x: number, y: number) => void
+  onTranslate: (x: number, y: number) => void,
 ) {
   const [translateTouch, setTranslateTouch] = useState({ x: 0, y: 0 });
 
@@ -51,11 +51,16 @@ export default function useTranslate(
     onTranslate(x, y);
   };
 
+  const handleMouseUp = (event: React.MouseEvent) => {
+    return event.currentTarget;
+  };
+
   return {
     onTouchStart: handleTouchStart,
     onTouchMove: handleTouchMove,
     onTouchEnd: handleTouchEnd,
     onMouseDown: handleMouseDown,
     onMouseMove: handleMouseMove,
+    onMouseUp: handleMouseUp,
   };
 }

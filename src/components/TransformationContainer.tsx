@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
-import useTransform from "../hooks/useTransform";
+import useSlidingTransform from "../hooks/useSlidingTransform";
 
 export type Transformable = {
   scale: number;
@@ -63,7 +63,7 @@ export default function TransformationContainer({
     setPosition({ x: position.x + x, y: position.y + y });
   };
 
-  const transformHandler = useTransform(handlePosition, handleScale);
+  const transformHandler = useSlidingTransform(handlePosition, handleScale);
 
   useLayoutEffect(() => {
     const updateSize = () => {

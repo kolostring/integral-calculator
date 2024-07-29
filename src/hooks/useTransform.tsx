@@ -31,6 +31,10 @@ export default function useTransform(
     translateHandler.onMouseMove(event);
   };
 
+  const handleMouseUp = (event: React.MouseEvent) => {
+    translateHandler.onMouseUp(event);
+  };
+
   const handleWheel = (event: React.WheelEvent) => {
     zoomHandler.onWheel(event);
   };
@@ -41,6 +45,7 @@ export default function useTransform(
     onTouchEnd: handleTouchEnd,
     onMouseDown: handleMouseDown,
     onMouseMove: handleMouseMove,
+    onMouseUp: handleMouseUp,
     onWheel: handleWheel,
   };
 }
