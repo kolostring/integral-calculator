@@ -29,17 +29,18 @@ export default function SVGFunctionGrapher({
     points.forEach((y, index) => {
       path += `L ${(index * deltaX + from) * scale - position.x} `;
       if (isFinite(y)) {
-        path += -y * scale - position.y + " ";
+        const renderY = -y * scale - position.y;
+        path += Math.min(Math.abs(renderY), height) * Math.sign(renderY) + " ";
       } else if (y === Infinity) {
-        path += 99999999999 + " ";
+        path += -height + " ";
       } else {
-        path += 99999999999 + " ";
+        path += height + " ";
       }
     });
 
     path += `V ${-position.y}`;
     return path;
-  }, [from, to, position, scale, functionPoints]);
+  }, [from, to, position, scale, functionPoints, height]);
 
   return (
     <svg viewBox={`${-width / 2} ${-height / 2} ${width} ${height}`} {...props}>
