@@ -39,7 +39,7 @@ function App() {
   const [form, setForm] = useState<FormFields>(initialForm);
 
   const parseExpression = (exp: string) => {
-    const modexp = exp.replace(/(?<=[+\-*/^()]|^)-/g, "!");
+    const modexp = exp.replace(`/(?<=[+-*/^()]|^)-/g`, "!");
     const regex = /([-+*/^()!])|\b(sin|cos|tan|sqrt|ln|x|e)\b|\b\d+(\.\d+)?\b/g;
     const express: string[] = [];
     let match;
@@ -47,8 +47,8 @@ function App() {
     while ((match = regex.exec(modexp)) !== null) {
       express.push(match[0]);
     }
-
-    return express;
+    
+    return express.length > 0? express: ["0"];
   };
 
   const getNamedItem = (
@@ -131,16 +131,16 @@ function App() {
 
           <div className="col-start-1 my-8">
             <h2 className="text-xl font-medium">Numerical Integration:</h2>
-            <label className="pr-1 text-end" htmlFor="to">
-              n =
+            <label className="pr-1 text-end">
+              <i>n =</i>
+              <input
+                type="text"
+                name="divisions"
+                className="bg-transparent"
+                defaultValue={initialForm.divisions}
+                onChange={adaptInputWidth}
+              />
             </label>
-            <input
-              type="text"
-              name="divisions"
-              className="bg-transparent"
-              defaultValue={initialForm.divisions}
-              onChange={adaptInputWidth}
-            />
             <div className="">
               <label className="cursor-pointer">
                 <input
