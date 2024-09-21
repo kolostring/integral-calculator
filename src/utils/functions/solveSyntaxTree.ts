@@ -4,7 +4,7 @@ import {
   unaryArithmeticOperators,
 } from "../constants/operators";
 import { SyntaxTreeKind } from "../constants/syntaxTreeKinds";
-import { SyntaxTree } from "./SyntaxTree";
+import { SyntaxTree } from "../classes/SyntaxTree";
 
 export default function solveSyntaxTree(ast: SyntaxTree, x: number): number {
   if (ast.getKind() === SyntaxTreeKind.BINARY_OPERATOR) {

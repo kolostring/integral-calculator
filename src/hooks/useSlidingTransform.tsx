@@ -1,6 +1,6 @@
 import { useCallback, useLayoutEffect, useRef } from "react";
 import useTransform, { useTransformProps } from "./useTransform";
-import lerp from "../utils/lerp";
+import lerp from "../utils/functions/lerp";
 
 export type useSlidingTransformProps = {
   slidingAlpha: number;

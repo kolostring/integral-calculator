@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
-import MidpointRemannSum from "./services/integralSolver/midpointRiemannRule";
-import SimpsonRule from "./services/integralSolver/SimpsonRule";
-import TrapezoidalRule from "./services/integralSolver/trapezoidalRule";
+import MidpointRemannSum from "./utils/functions/midpointRiemannRule";
+import SimpsonRule from "./utils/functions/SimpsonRule";
+import TrapezoidalRule from "./utils/functions/trapezoidalRule";
 import IntegralGrapher from "./components/IntegralGrapher";
 import { TokenKind } from "./utils/constants/tokenKinds";
 import Parser from "./utils/classes/Parser";
-import solveSyntaxTree from "./utils/classes/SyntaxTreeSolver";
+import solveSyntaxTree from "./utils/functions/solveSyntaxTree";
 import { SyntaxTree } from "./utils/classes/SyntaxTree";
 import { SyntaxTreeKind } from "./utils/constants/syntaxTreeKinds";
 
