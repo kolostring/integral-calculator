@@ -13,6 +13,21 @@ export enum TokenKind {
   NUMBER,
 }
 
+export const tokenKindToString: Record<TokenKind, string> = {
+  [TokenKind.BOF]: "BOF",
+  [TokenKind.EOF]: "EOF",
+  [TokenKind.SYMBOL]: "VARIABLE",
+  [TokenKind.L_PARENTHESIS]: "(",
+  [TokenKind.R_PARENTHESIS]: ")",
+  [TokenKind.COMMA]: ",",
+  [TokenKind.PLUS]: "+",
+  [TokenKind.MINUS]: "-",
+  [TokenKind.MUL]: "*",
+  [TokenKind.DIV]: "/",
+  [TokenKind.POWER]: "^",
+  [TokenKind.NUMBER]: "NUMBER",
+}
+
 export function isTokenLiteral(tokenKind: TokenKind){
   return tokenKind === TokenKind.NUMBER;
 }

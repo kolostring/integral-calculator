@@ -2,6 +2,7 @@ import {
   TokenKind,
   isTokenLiteral,
   isTokenUnaryOperator,
+  tokenKindToString,
 } from "../constants/tokenKinds";
 import Tokenizer from "./Tokenizer";
 import { SyntaxTree } from "./SyntaxTree";
@@ -18,11 +19,13 @@ export default class Parser {
     this.tokenizer.setInput(input);
   }
 
-  private eat(token: TokenKind) {
+  private eat(token: TokenKind, errorMessage?: string) {
     const currToken = this.tokenizer.getCurrentToken();
     if (currToken.kind !== token) {
       throw new Error(
-        `<${TokenKind[token]}> expected at row: "${currToken.row}" col: "${currToken.col}". Got <${TokenKind[currToken.kind]}>("${currToken.str}") instead.`,
+        errorMessage
+          ? errorMessage
+          : `"${tokenKindToString[token]}" expected at position: "${currToken.pos}". Got <${TokenKind[currToken.kind]}>("${currToken.str}") instead.`,
       );
     }
     this.tokenizer.advance();
@@ -37,7 +40,13 @@ export default class Parser {
         [],
       );
     }
-    return this.arithmeitcExpression();
+    const arithmeitcExpression = this.arithmeitcExpression();
+    const currToken = this.tokenizer.getCurrentToken();
+    this.eat(
+      TokenKind.EOF,
+      `Operator expected at position: "${currToken.pos}". Got <${TokenKind[currToken.kind]}>("${currToken.str}") instead.`,
+    );
+    return arithmeitcExpression;
   }
 
   private arithmeitcExpression(): SyntaxTree {
@@ -117,7 +126,7 @@ export default class Parser {
     }
 
     throw new Error(
-      `Expression expected at row: "${currToken.row}" col: "${currToken.col}". Got <${TokenKind[currToken.kind]}>("${currToken.str}") instead."`,
+      `Expression expected at position: "${currToken.pos}". Got <${TokenKind[currToken.kind]}>("${currToken.str}") instead."`,
     );
   }
 
