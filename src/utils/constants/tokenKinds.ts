@@ -18,7 +18,7 @@ export function isTokenLiteral(tokenKind: TokenKind){
 }
 
 export function isTokenUnaryOperator(tokenKind: TokenKind){
-  return tokenKind === TokenKind.PLUS || tokenKind === TokenKind.MINUS || tokenKind;
+  return tokenKind === TokenKind.PLUS || tokenKind === TokenKind.MINUS;
 }
 
 export function isTokenArithmeticOperator(tokenKind: TokenKind){
