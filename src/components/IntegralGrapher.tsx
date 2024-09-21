@@ -1,5 +1,3 @@
-import ShuntingYard from "../services/expressionSolver/ShuntingYard";
-import solvePostfix from "../services/expressionSolver/postfixSolver";
 import SVGFunctionGrapher from "./SVGFunctionGrapher";
 import SVGFunctionGridLines from "./SVGFunctionGridLines";
 import TransformationContainer, {
@@ -7,13 +5,13 @@ import TransformationContainer, {
 } from "./TransformationContainer";
 
 export type IntegralGrapherProps = {
-  parsedExpression: string[];
+  functionEvaluation: (x: number) => number;
   integralFrom: number;
   integralTo: number;
 };
 
 export default function IntegralGrapher({
-  parsedExpression,
+  functionEvaluation,
   integralFrom,
   integralTo,
 }: Readonly<IntegralGrapherProps>) {
@@ -41,10 +39,7 @@ export default function IntegralGrapher({
 
             for (let i = 0; i < n; i++) {
               try {
-                const ev = solvePostfix(
-                  ShuntingYard(parsedExpression),
-                  from + deltaX * i,
-                ).result;
+                const ev = functionEvaluation(from + deltaX * i);
 
                 res.push(ev);
               } catch (e) {
@@ -71,10 +66,7 @@ export default function IntegralGrapher({
                 const x = from + deltaX * i;
 
                 if (x > integralFrom && x < integralTo) {
-                  ev = solvePostfix(
-                    ShuntingYard(parsedExpression),
-                    from + deltaX * i,
-                  ).result;
+                  ev = functionEvaluation(from + deltaX * i);
                 }
                 res.push(ev);
               } catch (e) {

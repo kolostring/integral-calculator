@@ -1,12 +1,13 @@
 import { useMemo, useState } from "react";
-import solvePostfix from "./services/expressionSolver/postfixSolver";
-import ShuntingYard from "./services/expressionSolver/ShuntingYard";
 import MidpointRemannSum from "./services/integralSolver/midpointRiemannRule";
 import SimpsonRule from "./services/integralSolver/SimpsonRule";
 import TrapezoidalRule from "./services/integralSolver/trapezoidalRule";
 import IntegralGrapher from "./components/IntegralGrapher";
-import Tokenizer from "./utils/classes/Tokenizer";
 import { TokenKind } from "./utils/constants/tokenKinds";
+import Parser from "./utils/classes/Parser";
+import solveSyntaxTree from "./utils/classes/SyntaxTreeSolver";
+import { SyntaxTree } from "./utils/classes/SyntaxTree";
+import { SyntaxTreeKind } from "./utils/constants/syntaxTreeKinds";
 
 const integralSolvers = {
   midpoint: MidpointRemannSum,
@@ -41,42 +42,38 @@ function App() {
   const [form, setForm] = useState<FormFields>(initialForm);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const tokenizedExpression = useMemo(() => {
-    const arr: string[] = [];
-
-    const tokenizer = new Tokenizer(form.expression);
-    let token = tokenizer.getNextToken();
-    while (token.kind !== TokenKind.EOF) {
-      arr.push(token.str);
-      token = tokenizer.getNextToken();
+  const expressionTree = useMemo(() => {
+    const parser = new Parser(form.expression);
+    try {
+      return parser.expression();
+    } catch (e) {
+      setErrorMessage((e as Error).message);
     }
-
-    return arr;
+    return new SyntaxTree(
+      SyntaxTreeKind.LITERAL,
+      { col: 0, row: 0, pos: 0, str: "0", kind: TokenKind.NUMBER },
+      [],
+    );
   }, [form]);
 
   const integralSolution = useMemo(() => {
     try {
       const res = integralSolvers[form.integralSolver](
         (x) => {
-          const output = solvePostfix(ShuntingYard(tokenizedExpression), x);
+          const output = solveSyntaxTree(expressionTree, x);
 
-          if (output.error) {
-            throw new Error(output.error);
-          }
-
-          return output.result;
+          return output;
         },
         form.integralFrom,
         form.integralTo,
         form.divisions,
       );
-      setErrorMessage("");
       return res;
     } catch (e) {
       setErrorMessage((e as Error).message);
       return 0;
     }
-  }, [tokenizedExpression, form]);
+  }, [expressionTree, form]);
 
   const getNamedItem = (
     formElements: HTMLFormControlsCollection,
@@ -129,7 +126,10 @@ function App() {
                   type="text"
                   name="expression"
                   defaultValue={initialForm.expression}
-                  onChange={adaptInputWidth}
+                  onChange={(e) => {
+                    setErrorMessage("");
+                    adaptInputWidth(e);
+                  }}
                 />
                 <p className="ml-1">dx</p>
                 <p className="ml-1 shrink-0">{" ≈ " + integralSolution}</p>
@@ -193,7 +193,7 @@ function App() {
 
         <div className="col-start-2 row-span-2 row-start-1 mx-auto box-content aspect-square w-full border-2 border-cyan-500 bg-cyan-950">
           <IntegralGrapher
-            parsedExpression={tokenizedExpression}
+            functionEvaluation={(x)=>solveSyntaxTree(expressionTree, x)}
             integralFrom={form.integralFrom}
             integralTo={form.integralTo}
           />
