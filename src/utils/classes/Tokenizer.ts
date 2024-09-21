@@ -80,6 +80,10 @@ export default class Tokenizer {
   public advance(): Token {
     const lastToken = this.currentToken;
 
+    if (this.isCurrentCharWhiteSpace()) {
+      this.skipWhiteSpaces();
+    }
+
     if (this.ptr >= this.input.length) {
       this.currentToken = {
         str: "\0",
@@ -96,10 +100,6 @@ export default class Tokenizer {
   }
 
   private tokenize() {
-    if (this.isCurrentCharWhiteSpace()) {
-      this.skipWhiteSpaces();
-    }
-
     if (this.getCurrentChar() in operators) {
       this.tokenizeOperator();
     } else if (this.isCurrentCharNumber()) {
