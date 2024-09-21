@@ -31,7 +31,7 @@ export const binaryArithmeticOperators: {
     operation: (a, b) => a / b,
     tokenID: TokenKind.DIV,
   },
-  "**": {
+  "^": {
     operation: (a, b) => Math.pow(a, b),
     tokenID: TokenKind.POWER,
   },
