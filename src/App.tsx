@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import solvePostfix from "./services/expressionSolver/postfixSolver";
 import ShuntingYard from "./services/expressionSolver/ShuntingYard";
 import MidpointRemannSum from "./services/integralSolver/midpointRiemannRule";
 import SimpsonRule from "./services/integralSolver/SimpsonRule";
 import TrapezoidalRule from "./services/integralSolver/trapezoidalRule";
 import IntegralGrapher from "./components/IntegralGrapher";
+import Tokenizer from "./utils/classes/Tokenizer";
+import { TokenKind } from "./utils/constants/tokenKinds";
 
 const integralSolvers = {
   midpoint: MidpointRemannSum,
@@ -37,19 +39,44 @@ const adaptInputWidth = (event: React.ChangeEvent<HTMLInputElement>) => {
 
 function App() {
   const [form, setForm] = useState<FormFields>(initialForm);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const parseExpression = (exp: string) => {
-    const modexp = exp.replace(`/(?<=[+-*/^()]|^)-/g`, "!");
-    const regex = /([-+*/^()!])|\b(sin|cos|tan|sqrt|ln|x|e)\b|\b\d+(\.\d+)?\b/g;
-    const express: string[] = [];
-    let match;
+  const tokenizedExpression = useMemo(() => {
+    const arr: string[] = [];
 
-    while ((match = regex.exec(modexp)) !== null) {
-      express.push(match[0]);
+    const tokenizer = new Tokenizer(form.expression);
+    let token = tokenizer.getNextToken();
+    while (token.kind !== TokenKind.EOF) {
+      arr.push(token.str);
+      token = tokenizer.getNextToken();
     }
-    
-    return express.length > 0? express: ["0"];
-  };
+
+    return arr;
+  }, [form]);
+
+  const integralSolution = useMemo(() => {
+    try {
+      const res = integralSolvers[form.integralSolver](
+        (x) => {
+          const output = solvePostfix(ShuntingYard(tokenizedExpression), x);
+
+          if (output.error) {
+            throw new Error(output.error);
+          }
+
+          return output.result;
+        },
+        form.integralFrom,
+        form.integralTo,
+        form.divisions,
+      );
+      setErrorMessage("");
+      return res;
+    } catch (e) {
+      setErrorMessage((e as Error).message);
+      return 0;
+    }
+  }, [tokenizedExpression, form]);
 
   const getNamedItem = (
     formElements: HTMLFormControlsCollection,
@@ -105,19 +132,7 @@ function App() {
                   onChange={adaptInputWidth}
                 />
                 <p className="ml-1">dx</p>
-                <p className="ml-1 shrink-0">
-                  {" ≈ "}
-                  {integralSolvers[form.integralSolver](
-                    (x) =>
-                      solvePostfix(
-                        ShuntingYard(parseExpression(form.expression)),
-                        x,
-                      ).result,
-                    form.integralFrom,
-                    form.integralTo,
-                    form.divisions,
-                  )}
-                </p>
+                <p className="ml-1 shrink-0">{" ≈ " + integralSolution}</p>
               </div>
               <input
                 className="text-sm"
@@ -128,7 +143,7 @@ function App() {
               />
             </div>
           </div>
-
+          <p className="min-h-6 text-red-300">{errorMessage}</p>
           <div className="col-start-1 my-8">
             <h2 className="text-xl font-medium">Numerical Integration:</h2>
             <label className="pr-1 text-end">
@@ -178,7 +193,7 @@ function App() {
 
         <div className="col-start-2 row-span-2 row-start-1 mx-auto box-content aspect-square w-full border-2 border-cyan-500 bg-cyan-950">
           <IntegralGrapher
-            parsedExpression={parseExpression(form.expression)}
+            parsedExpression={tokenizedExpression}
             integralFrom={form.integralFrom}
             integralTo={form.integralTo}
           />
