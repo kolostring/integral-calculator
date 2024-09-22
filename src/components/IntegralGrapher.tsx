@@ -1,7 +1,7 @@
 import SVGFunctionGrapher from "./SVGFunctionGrapher";
 import SVGFunctionGridLines from "./SVGFunctionGridLines";
 import TransformationContainer, {
-  Transformable,
+  TransformableProps,
 } from "./TransformationContainer";
 
 export type IntegralGrapherProps = {
@@ -15,7 +15,7 @@ export default function IntegralGrapher({
   integralFrom,
   integralTo,
 }: Readonly<IntegralGrapherProps>) {
-  const renderGraph = (itemProps: Transformable) => {
+  const renderGraph = (itemProps: TransformableProps) => {
     return (
       <>
         <SVGFunctionGridLines
@@ -84,7 +84,7 @@ export default function IntegralGrapher({
 
   return (
     <TransformationContainer
-      className="relative"
+      className="relative h-full w-full cursor-move touch-none"
       renderItem={renderGraph}
       minScale={3}
       maxScale={45}

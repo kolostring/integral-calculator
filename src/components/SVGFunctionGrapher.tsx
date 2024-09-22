@@ -1,12 +1,12 @@
 import { useCallback } from "react";
-import { Transformable } from "./TransformationContainer";
+import { TransformableProps } from "./TransformationContainer";
 
 export type SVGFunctionGrapherProps = {
   functionPoints: (from: number, to: number) => number[];
   axesProps?: React.SVGAttributes<SVGPathElement>;
   graphProps?: React.SVGAttributes<SVGPathElement>;
 } & React.HTMLAttributes<SVGElement> &
-  Transformable;
+  TransformableProps;
 
 export default function SVGFunctionGrapher({
   functionPoints,

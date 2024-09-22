@@ -1,12 +1,12 @@
 import React from "react";
-import { Transformable } from "./TransformationContainer";
+import { TransformableProps } from "./TransformationContainer";
 
 export type SVGFunctionGridLinesProps = {
   numbersClassName?: string;
   strokeClassName?: string;
   axisClassName?: string;
   breakPointFactor: number;
-} & Transformable &
+} & TransformableProps &
   React.SVGProps<SVGSVGElement>;
 
 export default function SVGFunctionGridLines({

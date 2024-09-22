@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import useSlidingTransform from "../hooks/useSlidingTransform";
 
-export type Transformable = {
+export type TransformableProps = {
   scale: number;
   position: { x: number; y: number };
   width: number;
@@ -9,7 +9,7 @@ export type Transformable = {
 };
 
 export type TransformationContainer = {
-  renderItem: (itemProps: Transformable) => React.JSX.Element;
+  renderItem: (itemProps: TransformableProps) => React.JSX.Element;
   minScale: number;
   maxScale: number;
 } & React.DetailedHTMLProps<
@@ -19,7 +19,6 @@ export type TransformationContainer = {
 
 export default function TransformationContainer({
   renderItem,
-  className,
   minScale,
   maxScale,
   ...props
@@ -45,11 +44,11 @@ export default function TransformationContainer({
 
       const offset = {
         x:
-          position.x + 
+          position.x +
           (position.x + absoluteOrigin.x) *
             (zoom > 0 ? scaleMul - 1 : -(1 - 1 / scaleMul)),
         y:
-          position.y + 
+          position.y +
           (position.y + absoluteOrigin.y) *
             (zoom > 0 ? scaleMul - 1 : -(1 - 1 / scaleMul)),
       };
@@ -89,12 +88,18 @@ export default function TransformationContainer({
   }, []);
 
   return (
-    <div
-      ref={refContainer}
-      className={`${className} h-full w-full cursor-move touch-none`}
-      {...{ ...props, ...transformHandler }}
-    >
+    <div ref={refContainer} {...{ ...props, ...transformHandler }}>
       {renderItem({ height, position, scale, width })}
+
+      <button
+        className="absolute bottom-0 right-0 m-2 bg-cyan-600 bg-opacity-60 overflow-hidden backdrop-blur-sm size-8 flex justify-center items-center rounded-full"
+        onClick={() => {
+          setPosition({ x: 0, y: 0 });
+          setScale(10);
+        }}
+      >
+        <img src="/src/assets/reset.svg" alt="reset" />
+      </button>
     </div>
   );
 }
