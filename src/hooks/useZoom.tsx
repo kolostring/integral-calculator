@@ -8,22 +8,22 @@ export type useZoomProps = {
 export default function useZoom({ onZoom, wheelZoomMul }: useZoomProps) {
   const [lastPinchDistance, setLastPinchDistance] = useState(1);
 
-  const handleTouchStart = (event: React.TouchEvent) => {
-    if (event.touches.length !== 2) return;
+  const handlePointerDown = (cachedEvents: React.PointerEvent[]) => {
+    if (cachedEvents.length !== 2) return;
 
-    setLastPinchDistance(obtainPinchDistance(event.touches));
+    setLastPinchDistance(obtainPinchDistance(cachedEvents));
   };
 
-  const handleTouchMove = (event: React.TouchEvent) => {
-    if (event.touches.length !== 2) return;
+  const handlePointerMove = (cachedEvents: React.PointerEvent[]) => {
+    if (cachedEvents.length !== 2) return;
 
-    const pinchDistance = obtainPinchDistance(event.touches);
+    const pinchDistance = obtainPinchDistance(cachedEvents);
 
     const delta = pinchDistance - lastPinchDistance;
     setLastPinchDistance(pinchDistance);
 
-    const pos = obtainPinchCenter(event.touches);
-    const targetRect = event.currentTarget.getBoundingClientRect();
+    const pos = obtainPinchCenter(cachedEvents);
+    const targetRect = cachedEvents[0].currentTarget.getBoundingClientRect();
 
     onZoom(
       (Math.abs(delta / 100) + 1) * Math.sign(delta),
@@ -31,28 +31,32 @@ export default function useZoom({ onZoom, wheelZoomMul }: useZoomProps) {
     );
   };
 
-  const handleWheel = (event: React.WheelEvent) => {
+  const handleWheel = (event: WheelEvent) => {
     const pos = { x: event.clientX, y: event.clientY };
-    const targetRect = event.currentTarget.getBoundingClientRect();
+    const targetRect = (
+      event.currentTarget as HTMLElement
+    ).getBoundingClientRect();
 
     onZoom(
       Math.sign(-event.deltaY) * wheelZoomMul,
       obtainAbsoluteOrigin(pos, targetRect),
     );
+
+    event.preventDefault();
   };
 
-  const obtainPinchDistance = (touches: React.TouchList) => {
-    const touch1 = touches.item(0);
-    const touch2 = touches.item(1);
+  const obtainPinchDistance = (cachedEvents: React.PointerEvent[]) => {
+    const touch1 = cachedEvents[0];
+    const touch2 = cachedEvents[1];
     return Math.hypot(
       touch1.clientX - touch2.clientX,
       touch1.clientY - touch2.clientY,
     );
   };
 
-  const obtainPinchCenter = (touches: React.TouchList) => {
-    const touch1 = touches.item(0);
-    const touch2 = touches.item(1);
+  const obtainPinchCenter = (cachedEvents: React.PointerEvent[]) => {
+    const touch1 = cachedEvents[0];
+    const touch2 = cachedEvents[1];
     return {
       x: (touch1.clientX + touch2.clientX) / 2,
       y: (touch1.clientY + touch2.clientY) / 2,
@@ -72,8 +76,8 @@ export default function useZoom({ onZoom, wheelZoomMul }: useZoomProps) {
   };
 
   return {
-    onTouchStart: handleTouchStart,
-    onTouchMove: handleTouchMove,
+    onPointerDown: handlePointerDown,
+    onPointerMove: handlePointerMove,
     onWheel: handleWheel,
   };
 }

@@ -13,69 +13,43 @@ export default function useTranslate({
 }: useTranslateProps) {
   const [translateTouch, setTranslateTouch] = useState({ x: 0, y: 0 });
 
-  const handleTouchStart = (event: React.TouchEvent) => {
-    if (event.touches.length !== 1) return;
+  const handlePointerDown = (cachedEvents: React.PointerEvent[]) => {
+    if(cachedEvents.length !== 1) return;
 
-    const x = event.touches.item(0).clientX;
-    const y = event.touches.item(0).clientY;
+    const x = cachedEvents[0].clientX;
+    const y = cachedEvents[0].clientY;
 
     setTranslateTouch({ x: x, y: y });
 
-    if (onTranslateStart) onTranslateStart(event);
+    if (onTranslateStart) onTranslateStart(cachedEvents[0]);
   };
 
-  const handleTouchMove = (event: React.TouchEvent) => {
-    if (event.touches.length !== 1) return;
+  const handlerPointerMove = (cachedEvents: React.PointerEvent[]) => {
+    if(cachedEvents.length !== 1) return;
 
-    const x = translateTouch.x - event.touches.item(0).clientX;
-    const y = translateTouch.y - event.touches.item(0).clientY;
+    const x = translateTouch.x - cachedEvents[0].clientX;
+    const y = translateTouch.y - cachedEvents[0].clientY;
     setTranslateTouch({
-      x: event.touches.item(0).clientX,
-      y: event.touches.item(0).clientY,
+      x: cachedEvents[0].clientX,
+      y: cachedEvents[0].clientY,
     });
     onTranslate(x, y);
   };
 
-  const handleTouchEnd = (event: React.TouchEvent) => {
-    if (onTranslateEnd) onTranslateEnd(event);
-    
-    if (event.touches.length !== 1) return;
+  const handlePointerUp = (cachedEvents: React.PointerEvent[]) => {
+    if (onTranslateEnd) onTranslateEnd(cachedEvents[0]);
+
+    if(cachedEvents.length !== 1) return;
 
     setTranslateTouch({
-      x: event.touches.item(0).clientX,
-      y: event.touches.item(0).clientY,
+      x: cachedEvents[0].clientX,
+      y: cachedEvents[0].clientY,
     });
-  };
-
-  const handleMouseDown = (event: React.MouseEvent) => {
-    setTranslateTouch({ x: event.clientX, y: event.clientY });
-
-    if (onTranslateStart) onTranslateStart(event);
-  };
-
-  const handleMouseMove = (event: React.MouseEvent) => {
-    if (event.buttons !== 1) return;
-
-    const x = translateTouch.x - event.clientX;
-    const y = translateTouch.y - event.clientY;
-    setTranslateTouch({
-      x: event.clientX,
-      y: event.clientY,
-    });
-    onTranslate(x, y);
-  };
-
-  const handleMouseUp = (event: React.MouseEvent) => {
-    if (onTranslateEnd) onTranslateEnd(event);
-    return event.currentTarget;
   };
 
   return {
-    onTouchStart: handleTouchStart,
-    onTouchMove: handleTouchMove,
-    onTouchEnd: handleTouchEnd,
-    onMouseDown: handleMouseDown,
-    onMouseMove: handleMouseMove,
-    onMouseUp: handleMouseUp,
+    onPointerDown: handlePointerDown,
+    onPointerMove: handlerPointerMove,
+    onPointerUp: handlePointerUp,
   };
 }

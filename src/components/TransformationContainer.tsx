@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import useSlidingTransform from "../hooks/useSlidingTransform";
 
 export type TransformableProps = {
@@ -62,7 +62,7 @@ export default function TransformationContainer({
     setPosition({ x: position.x + x, y: position.y + y });
   };
 
-  const transformHandler = useSlidingTransform({
+  const { onWheel, ...transformHandler } = useSlidingTransform({
     onTranslate: handlePosition,
     onZoom: handleScale,
     wheelZoomMul: 1.1,
@@ -87,18 +87,26 @@ export default function TransformationContainer({
     };
   }, []);
 
+  useEffect(() => {
+    refContainer.current?.addEventListener("wheel", onWheel, {
+      passive: false,
+    });
+
+    return refContainer.current?.removeEventListener("wheel", onWheel);
+  }, [onWheel]);
+
   return (
     <div ref={refContainer} {...{ ...props, ...transformHandler }}>
       {renderItem({ height, position, scale, width })}
 
       <button
-        className="absolute bottom-0 right-0 m-2 bg-cyan-600 bg-opacity-60 overflow-hidden backdrop-blur-sm size-8 flex justify-center items-center rounded-full"
+        className="absolute bottom-0 right-0 m-2 flex size-8 items-center justify-center overflow-hidden rounded-full bg-cyan-600 bg-opacity-60 backdrop-blur-sm"
         onClick={() => {
           setPosition({ x: 0, y: 0 });
           setScale(10);
         }}
       >
-        <img src="/src/assets/reset.svg" alt="reset" />
+        <img className="-mt-[1px]" src="/src/assets/reset.svg" alt="reset" />
       </button>
     </div>
   );

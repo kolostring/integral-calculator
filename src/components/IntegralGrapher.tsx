@@ -22,7 +22,7 @@ export default function IntegralGrapher({
           {...itemProps}
           breakPointFactor={4.2}
           className="pointer-events-none absolute top-0"
-          numbersClassName="fill-cyan-700"
+          numbersClassName="fill-cyan-700 select-none"
           strokeClassName="stroke-cyan-700"
           axisClassName="stroke-cyan-300"
         />

@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import useTranslate, { useTranslateProps } from "./useTranslate";
 import useZoom, { useZoomProps } from "./useZoom";
 
@@ -17,43 +18,43 @@ export default function useTransform({
   });
   const zoomHandler = useZoom({ onZoom, wheelZoomMul });
 
-  const handleTouchStart = (event: React.TouchEvent) => {
-    translateHandler.onTouchStart(event);
-    zoomHandler.onTouchStart(event);
+  const cachedPointerEvent = useRef<React.PointerEvent[]>([]);
+
+  const handleTouchStart = (event: React.PointerEvent) => {
+    (event.target as HTMLElement).setPointerCapture(event.pointerId);
+    cachedPointerEvent.current.push(event);
+
+    translateHandler.onPointerDown(cachedPointerEvent.current);
+    zoomHandler.onPointerDown(cachedPointerEvent.current);
   };
 
-  const handleTouchMove = (event: React.TouchEvent) => {
-    translateHandler.onTouchMove(event);
-    zoomHandler.onTouchMove(event);
+  const handleTouchMove = (event: React.PointerEvent) => {
+    const index = cachedPointerEvent.current.findIndex(
+      (pe) => pe.pointerId === event.pointerId,
+    );
+    cachedPointerEvent.current[index] = event;
+
+    translateHandler.onPointerMove(cachedPointerEvent.current);
+    zoomHandler.onPointerMove(cachedPointerEvent.current);
   };
 
-  const handleTouchEnd = (event: React.TouchEvent) => {
-    translateHandler.onTouchEnd(event);
+  const handleTouchEnd = (event: React.PointerEvent) => {
+    (event.target as HTMLElement).releasePointerCapture(event.pointerId);
+    cachedPointerEvent.current = cachedPointerEvent.current.filter(
+      (pe) => pe.pointerId !== event.pointerId,
+    );
+
+    translateHandler.onPointerUp(cachedPointerEvent.current);
   };
 
-  const handleMouseDown = (event: React.MouseEvent) => {
-    translateHandler.onMouseDown(event);
-  };
-
-  const handleMouseMove = (event: React.MouseEvent) => {
-    translateHandler.onMouseMove(event);
-  };
-
-  const handleMouseUp = (event: React.MouseEvent) => {
-    translateHandler.onMouseUp(event);
-  };
-
-  const handleWheel = (event: React.WheelEvent) => {
+  const handleWheel = (event: WheelEvent) => {
     zoomHandler.onWheel(event);
   };
 
   return {
-    onTouchStart: handleTouchStart,
-    onTouchMove: handleTouchMove,
-    onTouchEnd: handleTouchEnd,
-    onMouseDown: handleMouseDown,
-    onMouseMove: handleMouseMove,
-    onMouseUp: handleMouseUp,
+    onPointerDown: handleTouchStart,
+    onPointerMove: handleTouchMove,
+    onPointerUp: handleTouchEnd,
     onWheel: handleWheel,
   };
 }
