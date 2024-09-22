@@ -57,7 +57,7 @@ export default function useSlidingTransform({
   }, [onSlidingTranslate, slidingAlpha]);
 
   useLayoutEffect(() => {
-    const requestID = setInterval(animate, 10);
+    const requestID = setInterval(animate, 20);
     return () => {
       clearTimeout(requestID);
     };
