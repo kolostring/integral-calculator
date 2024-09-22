@@ -90,11 +90,12 @@ export default function TransformationContainer({
   }, []);
 
   useEffect(() => {
-    refContainer.current?.addEventListener("wheel", onWheel, {
-      passive: false,
-    });
+    const container = refContainer.current;
+    container?.addEventListener("wheel", onWheel);
 
-    return refContainer.current?.removeEventListener("wheel", onWheel);
+    return () => {
+      container?.removeEventListener("wheel", onWheel);
+    };
   }, [onWheel]);
 
   return (
