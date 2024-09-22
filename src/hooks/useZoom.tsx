@@ -23,7 +23,10 @@ export default function useZoom({ onZoom, wheelZoomMul }: useZoomProps) {
     setLastPinchDistance(pinchDistance);
 
     const pos = obtainPinchCenter(cachedEvents);
-    const targetRect = cachedEvents[0].currentTarget.getBoundingClientRect();
+    const targetRect =
+      cachedEvents
+        .find((touch) => touch.currentTarget !== null)
+        ?.currentTarget.getBoundingClientRect() ?? new DOMRect();
 
     onZoom(
       (Math.abs(delta / 100) + 1) * Math.sign(delta),
