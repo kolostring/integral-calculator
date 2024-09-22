@@ -1,4 +1,4 @@
-import { SyntaxTreeKind } from "../constants/syntaxTreeKinds";
+import { SyntaxTreeKind } from "@/utils/constants/syntaxTreeKinds";
 import { Token } from "./Tokenizer";
 
 

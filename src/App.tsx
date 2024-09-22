@@ -1,4 +1,4 @@
-import IntegralForm from "./IntegralForm";
+import IntegralForm from "@/IntegralForm";
 
 function App() {
   return (

@@ -1,10 +1,10 @@
-import { mathConstants, mathFunctions } from "../constants/math";
+import { mathConstants, mathFunctions } from "@/utils/constants/math";
 import {
   binaryArithmeticOperators,
   unaryArithmeticOperators,
 } from "../constants/operators";
-import { SyntaxTreeKind } from "../constants/syntaxTreeKinds";
-import { SyntaxTree } from "../classes/SyntaxTree";
+import { SyntaxTreeKind } from "@/utils/constants/syntaxTreeKinds";
+import { SyntaxTree } from "@/utils/classes/SyntaxTree";
 
 export default function solveSyntaxTree(ast: SyntaxTree, x: number): number {
   if (ast.getKind() === SyntaxTreeKind.BINARY_OPERATOR) {

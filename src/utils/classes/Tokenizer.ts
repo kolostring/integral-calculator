@@ -1,5 +1,5 @@
-import { operators } from "../constants/operators";
-import { TokenKind } from "../constants/tokenKinds";
+import { operators } from "@/utils/constants/operators";
+import { TokenKind } from "@/utils/constants/tokenKinds";
 
 export type Token = {
   str: string;

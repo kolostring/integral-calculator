@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import Parser from "../utils/classes/Parser";
-import postfix from "../utils/constants/postfixFunctions";
+import Parser from "@/utils/classes/Parser";
+import postfix from "@/utils/functions/postfixFunctions";
 
 const parser = new Parser();
 

@@ -3,10 +3,10 @@ import {
   isTokenLiteral,
   isTokenUnaryOperator,
   tokenKindToString,
-} from "../constants/tokenKinds";
+} from "@/utils/constants/tokenKinds";
 import Tokenizer from "./Tokenizer";
 import { SyntaxTree } from "./SyntaxTree";
-import { SyntaxTreeKind } from "../constants/syntaxTreeKinds";
+import { SyntaxTreeKind } from "@/utils/constants/syntaxTreeKinds";
 
 export default class Parser {
   private tokenizer: Tokenizer;
@@ -23,9 +23,8 @@ export default class Parser {
     const currToken = this.tokenizer.getCurrentToken();
     if (currToken.kind !== token) {
       throw new Error(
-        errorMessage
-          ? errorMessage
-          : `"${tokenKindToString[token]}" expected at position: "${currToken.pos}". Got <${TokenKind[currToken.kind]}>("${currToken.str}") instead.`,
+        errorMessage ??
+          `"${tokenKindToString[token]}" expected at position: "${currToken.pos}". Got <${TokenKind[currToken.kind]}>("${currToken.str}") instead.`,
       );
     }
     this.tokenizer.advance();

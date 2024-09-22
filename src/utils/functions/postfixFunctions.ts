@@ -1,5 +1,5 @@
-import { SyntaxTree } from "../classes/SyntaxTree";
-import { SyntaxTreeKind } from "./syntaxTreeKinds";
+import { SyntaxTree } from "@/utils/classes/SyntaxTree";
+import { SyntaxTreeKind } from "@/utils/constants/syntaxTreeKinds";
 
 const postfixFunctions : Record<SyntaxTreeKind, (syntaxTree: SyntaxTree) => string> = {
   [SyntaxTreeKind.VARIABLE]: (syntaxTree) =>{

@@ -1,5 +1,7 @@
+import useSlidingTransform from "@/hooks/useSlidingTransform";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import useSlidingTransform from "../hooks/useSlidingTransform";
+
+import ResetImage from "@/assets/reset.svg";
 
 export type TransformableProps = {
   scale: number;
@@ -106,7 +108,7 @@ export default function TransformationContainer({
           setScale(10);
         }}
       >
-        <img className="-mt-[1px]" src="/src/assets/reset.svg" alt="reset" />
+        <img className="-mt-[1px]" src={ResetImage} alt="reset" />
       </button>
     </div>
   );
