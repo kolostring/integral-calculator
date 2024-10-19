@@ -2,6 +2,8 @@ import useSlidingTransform from "@/hooks/useSlidingTransform";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import ResetImage from "@/assets/reset.svg";
+import PlusImage from "@/assets/plus.svg";
+import MinusImage from "@/assets/minus.svg";
 
 export type TransformableProps = {
   scale: number;
@@ -99,18 +101,42 @@ export default function TransformationContainer({
   }, [onWheel]);
 
   return (
-    <div ref={refContainer} {...{ ...props, ...transformHandler }}>
-      {renderItem({ height, position, scale, width })}
-
-      <button
-        className="absolute bottom-0 right-0 m-2 flex size-8 items-center justify-center overflow-hidden rounded-full bg-cyan-600 bg-opacity-60 backdrop-blur-sm"
-        onClick={() => {
-          setPosition({ x: 0, y: 0 });
-          setScale(10);
-        }}
+    <div role="application" {...props}>
+      <div
+        ref={refContainer}
+        {...transformHandler}
+        className="relative h-full w-full"
       >
-        <img className="-mt-[1px]" src={ResetImage} alt="reset" />
-      </button>
+        {renderItem({ height, position, scale, width })}
+      </div>
+
+      <div role="toolbar" className="absolute bottom-0 right-0 m-2 flex gap-2">
+        {(
+          [
+            [MinusImage, "zoom out", () => handleScale(-1.5, { x: 0, y: 0 })],
+            [PlusImage, "zoom in", () => handleScale(1.5, { x: 0, y: 0 })],
+            [
+              ResetImage,
+              "reset",
+              () => {
+                setScale(10);
+                setPosition({ x: 0, y: 0 });
+              },
+            ],
+          ] as [string, string, () => void][]
+        ).map(([src, alt, onClick]) => (
+          <button
+            key={alt}
+            className="grid size-8 select-none place-items-center overflow-hidden rounded-full bg-neutral/20 p-1 backdrop-blur-sm backdrop-brightness-50"
+            onClick={(event) => {
+              event.preventDefault();
+              onClick();
+            }}
+          >
+            <img draggable="false" className="-mt-[1px]" src={src} alt={alt} />
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
