@@ -21,20 +21,20 @@ export default function IntegralGrapher({
         <SVGFunctionGridLines
           {...itemProps}
           breakPointFactor={4.2}
-          className="pointer-events-none absolute top-0"
-          numbersClassName="fill-cyan-700 select-none"
-          strokeClassName="stroke-cyan-700"
-          axisClassName="stroke-cyan-300"
+          className="pointer-events-none absolute top-0 isolate"
+          numbersClassName="fill-neutral/40 dark:fill-neutral/20 select-none"
+          strokeClassName="stroke-neutral/20 select-none"
+          axisClassName="stroke-neutral/60"
         />
 
         <SVGFunctionGrapher
           className="absolute top-0"
           graphProps={{
-            className: "stroke-2 stroke-cyan-200 fill-transparent",
+            className: "stroke-2 stroke-primary fill-transparent",
           }}
           functionPoints={(from, to) => {
             const res = [];
-            const n = 1000;
+            const n = 5000;
             const deltaX = (to - from) / n;
 
             for (let i = 0; i < n; i++) {
@@ -54,7 +54,7 @@ export default function IntegralGrapher({
 
         <SVGFunctionGrapher
           className="absolute top-0"
-          graphProps={{ className: "fill-cyan-300 opacity-20" }}
+          graphProps={{ className: "fill-primary/50" }}
           functionPoints={(from, to) => {
             const res = [];
             const n = 1000;
