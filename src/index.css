@@ -1,8 +1,31 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --text: 215 43% 26%;
+    --background: 120 4% 89%;
+    --secondary: 215 47% 72%;
+    --neutral: 204 26% 19%;
+    --primary: 16 38% 64%;
+  }
+
+  html.dark {
+    --text: 219 41% 92%;
+    --background: 120 4% 11%;
+    --secondary: 215 97% 72%;
+    --neutral: 0 0% 84%;
+    --primary: 23 44% 68%;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--text));
+  }
+
   input[type="number"]::-webkit-outer-spin-button,
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"] {
@@ -10,21 +33,42 @@
     margin: 0;
     -moz-appearance: textfield !important;
   }
-}
 
-body {
-  @apply bg-cyan-950 text-cyan-50;
-}
+  .content-grid {
+    --padding-inline: 1rem;
+    --content-max-width: 900px;
+    --breakout-max-width: 1200px;
 
-input {
-  @apply focus:outline-none;
-}
+    --breakout-size: calc(
+      (var(--breakout-max-width) - var(--content-max-width)) / 2
+    );
 
-input[type="text"],
-input[type="number"] {
-  @apply min-w-[1.5rem] rounded-sm bg-cyan-950 px-2 text-center font-math transition-colors hover:text-cyan-900 focus:bg-cyan-300 focus:text-cyan-900 active:bg-cyan-400;
-}
+    display: grid;
+    grid-template-columns:
+      [full-width-start] minmax(var(--padding-inline), 1fr)
+      [breakout-start] minmax(0, var(--breakout-size))
+      [content-start] min(
+        100% - (var(--padding-inline) * 2),
+        var(--content-max-width)
+      )
+      [content-end]
+      minmax(0, var(--breakout-size)) [breakout-end]
+      minmax(var(--padding-inline), 1fr) [full-width-end];
+  }
 
-input[type="radio"] {
-  @apply mr-2 h-3 w-3 appearance-none rounded-full bg-cyan-950 transition-colors checked:bg-cyan-600;
+  .content-grid > :not(.breakout, .full-width),
+  .full-width > :not(.breakout, .full-width) {
+    grid-column: content;
+  }
+
+  .content-grid > .breakout {
+    grid-column: breakout;
+  }
+
+  .content-grid > .full-width {
+    grid-column: full-width;
+
+    display: grid;
+    grid-template-columns: inherit;
+  }
 }
