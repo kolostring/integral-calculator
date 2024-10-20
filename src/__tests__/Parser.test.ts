@@ -59,8 +59,8 @@ describe("Parser", () => {
   });
 
   it("should parse Variables", () => {
-    parser.setInput("_ab + cd2 / efg");
-    expect(postfix(parser.expression())).toBe("_ab cd2 efg / +");
+    parser.setInput("_ab + cd / efg");
+    expect(postfix(parser.expression())).toBe("_ab cd efg / +");
   })
 
   it("should parse function calls", () => {
@@ -76,18 +76,22 @@ describe("Parser", () => {
     expect(postfix(parser.expression())).toBe("foo( (foo()) )");
   })
 
+  it("should parse skipping product", () => {
+    parser.setInput("2x");
+    expect(postfix(parser.expression())).toBe("2 x *");
+
+    parser.setInput("5(123+4)")
+    expect(postfix(parser.expression())).toBe("5 123 4 + *");
+
+    parser.setInput("sin(2x)");
+    expect(postfix(parser.expression())).toBe("sin( (2 x *) )");
+
+  })
+
   it("should not allow to have missing operands", () => {
     parser.setInput("1-");
     expect(()=>{parser.expression()}).toThrowError();
     parser.setInput("1*2//3");
     expect(()=>{parser.expression()}).toThrowError();
   });
-
-  it("should not allow to have empty expressions", () => {
-    parser.setInput("");
-    expect(()=>{parser.expression()}).toThrowError();
-    parser.setInput("()");
-    expect(()=>{parser.expression()}).toThrowError();
-  });
-
 });

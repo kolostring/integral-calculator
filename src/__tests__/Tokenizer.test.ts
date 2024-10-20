@@ -62,4 +62,18 @@ describe("Tokenizer", () => {
 
     expect(tokenizer.getCurrentToken().str).toBe("ab");
   })
+
+  it("should tokenize numbers separated from words", ()=>{
+    tokenizer.setInput("123x");
+    tokenizer.advance();
+    ["123", "x"].forEach((str, index)=>{
+      expect(tokenizer.peekToken(index).str).toBe(str);
+    })
+
+    tokenizer.setInput("abc123");
+    tokenizer.advance();
+    ["abc", "123"].forEach((str, index)=>{
+      expect(tokenizer.peekToken(index).str).toBe(str);
+    })
+  })
 });

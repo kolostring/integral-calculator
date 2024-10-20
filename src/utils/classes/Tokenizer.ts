@@ -138,7 +138,7 @@ export default class Tokenizer {
   }
 
   private tokenizeNumber(): void {
-    const str = this.stripWord();
+    const str = this.stripNumber();
 
     this.updateCurrentToken(str, TokenKind.NUMBER);
   }
@@ -147,6 +147,22 @@ export default class Tokenizer {
     const str = this.stripWord();
 
     this.updateCurrentToken(str, TokenKind.SYMBOL);
+  }
+
+  private stripNumber(): string {
+    let str = "";
+
+    do {
+      str += this.getCurrentChar();
+      this.ptr++;
+      this.col++;
+    } while (
+      this.ptr < this.input.length &&
+      !this.isCurrentCharWhiteSpace() &&
+      this.isCurrentCharNumber()
+    );
+
+    return str;
   }
 
   private stripWord(): string {
@@ -159,6 +175,7 @@ export default class Tokenizer {
     } while (
       this.ptr < this.input.length &&
       !this.isCurrentCharWhiteSpace() &&
+      !this.isCurrentCharNumber() &&
       !(this.getCurrentChar() in operators)
     );
 

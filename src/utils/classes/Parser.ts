@@ -61,6 +61,15 @@ export default class Parser {
         [root, this.term()],
       );
     }
+    
+    const currToken = this.tokenizer.getCurrentToken();
+    if(currToken.kind === TokenKind.SYMBOL || currToken.kind === TokenKind.L_PARENTHESIS){
+      return new SyntaxTree(
+        SyntaxTreeKind.BINARY_OPERATOR,
+        {...this.tokenizer.getCurrentToken(), str: "*", kind: TokenKind.MUL},
+        [root, this.arithmeitcExpression()],
+      )
+    }
 
     return root;
   }
