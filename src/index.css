@@ -5,10 +5,16 @@
 @tailwind utilities;
 
 @layer base {
+  html{
+    scroll-behavior: smooth;
+    scroll-margin-top: 100px;
+  }
+
   :root {
     --text: 215 43% 26%;
     --background: 120 4% 89%;
-    --secondary: 215 47% 72%;
+    /* --secondary: 215 47% 72%;*/
+    --secondary: 215 67% 62%;
     --neutral: 204 26% 19%;
     --primary: 16 38% 64%;
   }

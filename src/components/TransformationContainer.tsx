@@ -69,7 +69,7 @@ export default function TransformationContainer({
   const { onWheel, ...transformHandler } = useSlidingTransform({
     onTranslate: handlePosition,
     onZoom: handleScale,
-    wheelZoomMul: 1.1,
+    wheelZoomMul: 1.4,
     slidingAlpha: 0.07,
   });
 

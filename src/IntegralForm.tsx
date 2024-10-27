@@ -1,4 +1,11 @@
-import { Suspense, lazy, useMemo, useState } from "react";
+import {
+  DetailedHTMLProps,
+  HtmlHTMLAttributes,
+  Suspense,
+  lazy,
+  useMemo,
+  useState,
+} from "react";
 import MidpointRemannSum from "./utils/functions/midpointRiemannRule";
 import SimpsonRule from "./utils/functions/SimpsonRule";
 import TrapezoidalRule from "./utils/functions/trapezoidalRule";
@@ -6,10 +13,15 @@ import { TokenKind } from "./utils/constants/tokenKinds";
 import Parser from "./utils/classes/Parser";
 import { SyntaxTree } from "./utils/classes/SyntaxTree";
 import { SyntaxTreeKind } from "./utils/constants/syntaxTreeKinds";
-import ChartIcon from "@/assets/chart.svg";
+import ChartIcon from "@/assets/chart.svg?react";
 import solveSyntaxTree from "./utils/functions/solveSyntaxTree";
 
 const LazyIntegralGrapher = lazy(() => import("@/components/IntegralGrapher"));
+
+type IntegralFormProps = DetailedHTMLProps<
+  HtmlHTMLAttributes<HTMLDivElement>,
+  HTMLDivElement
+>;
 
 const integralSolvers = {
   midpoint: MidpointRemannSum,
@@ -46,7 +58,7 @@ const adaptInputWidth = (event: React.ChangeEvent<HTMLInputElement>) => {
   target.style.width = target.scrollWidth + "px";
 };
 
-export default function IntegralForm() {
+export default function IntegralForm(props: IntegralFormProps) {
   const [form, setForm] = useState<FormFields>(initialForm);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -117,7 +129,7 @@ export default function IntegralForm() {
   };
 
   return (
-    <section id="calculator" aria-labelledby="calculator-title">
+    <section {...props} aria-labelledby="calculator-title">
       <h2
         className="sr-only mb-12 flex items-center gap-4 after:h-px after:w-full after:bg-white"
         id="calculator-title"
@@ -128,13 +140,13 @@ export default function IntegralForm() {
         <form
           action="/"
           onSubmit={handleSubmit}
-          className="flex flex-col rounded-lg p-6"
+          className="flex flex-col rounded-lg"
         >
           <fieldset
             name="Integral definition"
             className="mb-8 grid grid-cols-[auto_1fr] items-center gap-x-2 gap-y-1"
           >
-            <legend className="mb-6 text-xs font-extralight uppercase tracking-widest dark:text-neutral/70">
+            <legend className="mb-6 text-xs font-extralight uppercase tracking-widest dark:text-primary/70">
               Integral definition
             </legend>
             <span className="row-span-3 mr-2 place-self-center pb-[0.25em] pl-2 text-7xl leading-none">
@@ -184,7 +196,7 @@ export default function IntegralForm() {
           </fieldset>
 
           <fieldset className="mb-12 grid grid-cols-3 gap-x-3">
-            <legend className="mb-6 text-xs font-extralight uppercase tracking-widest dark:text-neutral/70">
+            <legend className="mb-6 text-xs font-extralight uppercase tracking-widest dark:text-primary/70">
               Numerical Integration
             </legend>
 
@@ -214,11 +226,7 @@ export default function IntegralForm() {
                   aria-describedby={value + "-description"}
                   defaultChecked={index === 0}
                 />
-                <img
-                  src={ChartIcon}
-                  alt="chart"
-                  className="mb-2 size-6 shrink-0"
-                />
+                <ChartIcon className="mb-2 size-6 shrink-0 dark:fill-text" />
                 <strong
                   className="mb-1 shrink-0 text-balance text-center text-sm font-semibold"
                   id={value + "-label"}
@@ -259,15 +267,15 @@ export default function IntegralForm() {
             className="font group relative isolate col-span-2 col-start-1 mt-auto w-full transition-colors before:absolute before:left-0 before:right-0 before:top-1/4 before:-z-10 before:h-full before:rounded-full before:bg-gradient-to-r before:from-secondary before:to-secondary before:opacity-5 before:blur-lg before:transition-opacity before:content-[''] hover:before:opacity-20 focus:outline-none focus:before:opacity-30 dark:text-background"
             type="submit"
           >
-            <div className="relative h-full w-full overflow-hidden rounded-lg px-10 py-2 text-lg font-medium before:absolute before:inset-0 before:-right-1/2 before:-z-10 before:bg-gradient-to-r before:from-primary before:from-30% before:to-secondary before:transition-transform before:content-[''] hover:before:-translate-x-1/4 group-focus:before:-translate-x-1/4">
+            <div className="relative h-full w-full overflow-hidden rounded-lg px-10 py-2 text-lg font-medium before:absolute before:inset-0 before:-right-1/2 before:-z-10 before:bg-gradient-to-r before:from-primary before:from-30% before:to-secondary/35 before:transition-transform before:content-[''] hover:before:-translate-x-1/4 group-focus:before:-translate-x-1/4 dark:before:to-secondary">
               Calculate It!
             </div>
           </button>
         </form>
         <article className="col-start-2 mx-auto mt-5 flex h-full w-full flex-col gap-10 place-self-center lg:mt-0">
-          <div className="flex h-full flex-col rounded-lg bg-gradient-to-tr from-transparent from-30% to-secondary/50 p-6 pb-3 dark:to-secondary/10">
+          <div className="flex h-full flex-col rounded-lg bg-gradient-to-tr from-transparent from-30% to-secondary/30 p-6 pb-3 dark:to-secondary/10">
             <header>
-              <h3 className="text-xs font-extralight uppercase tracking-widest dark:text-neutral/70">
+              <h3 className="text-xs font-extralight uppercase tracking-widest dark:text-primary/70">
                 Integral Result
               </h3>
               <p className="mb-1 text-balance text-end text-xl font-bold leading-none text-neutral">
@@ -292,7 +300,7 @@ export default function IntegralForm() {
                 )}
               </i>
             </p>
-            <p className="text-xs text-end tracking-wide text-red-400">
+            <p className="text-end text-xs tracking-wide text-red-400">
               {errorMessage}
             </p>
           </div>
