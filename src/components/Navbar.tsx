@@ -6,7 +6,7 @@ export default function Navbar() {
   const { scrollPosition } = useScroll(100, 100);
   const lastScrollPosition = useRef(scrollPosition);
   const isShown = useMemo(
-    () => lastScrollPosition.current - scrollPosition > 0,
+    () => lastScrollPosition.current - scrollPosition >= 0,
     [scrollPosition],
   );
 
