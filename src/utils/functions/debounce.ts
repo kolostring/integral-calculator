@@ -2,7 +2,7 @@ export default function debounce(
 	mainFunction: (...args: any[]) => any,
 	delay: number,
 ) {
-	let timer: NodeJS.Timeout;
+	let timer: number;
 
 	return (...args: any[]) => {
 		clearTimeout(timer);
