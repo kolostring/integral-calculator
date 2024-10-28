@@ -204,17 +204,17 @@ export default function IntegralForm(props: IntegralFormProps) {
               [
                 "trapezoidal",
                 "Trapezoidal Rule",
-                "Simplest to implement, with the least accuracy.",
+                "Simplest and least accurate.", 
               ],
               ["midpoint", "Midpoint Rule", "Better accuracy the bigger n is."],
               [
                 "simpsons",
                 "Simpson's Rule",
-                "Highest accuracy. Best for curved functions.",
+                "Highest accuracy. Best on curves.",
               ],
             ].map(([value, label, description], index) => (
               <label
-                className="group relative flex w-full cursor-pointer flex-col items-center rounded-md bg-neutral/5 px-1 py-4 transition-colors focus-within:bg-primary/40 dark:focus-within:bg-transparent"
+                className="group relative flex w-full cursor-pointer flex-col items-center rounded-md bg-neutral/5 px-2 py-4 transition-colors focus-within:bg-primary/40 dark:focus-within:bg-transparent"
                 key={value}
               >
                 <input
@@ -228,7 +228,7 @@ export default function IntegralForm(props: IntegralFormProps) {
                 />
                 <ChartIcon className="mb-2 size-6 shrink-0 dark:fill-text" />
                 <strong
-                  className="mb-1 shrink-0 text-balance text-center text-sm font-semibold"
+                  className="mb-1 shrink-0 text-balance max-w-[10ch] md:max-w-full text-center text-sm font-semibold"
                   id={value + "-label"}
                 >
                   {label}

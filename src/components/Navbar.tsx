@@ -1,6 +1,8 @@
 import useScroll from "@/hooks/useScroll";
 import DarkModeSwitch from "./DarkModeSwitch";
-import { useLayoutEffect, useMemo, useRef } from "react";
+import Menu from "@/assets/menu.svg?react";
+
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 
 export default function Navbar() {
   const { scrollPosition } = useScroll(100, 100);
@@ -10,13 +12,15 @@ export default function Navbar() {
     [scrollPosition],
   );
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   useLayoutEffect(() => {
     lastScrollPosition.current = scrollPosition;
   }, [scrollPosition]);
 
   return (
     <div
-      className={`full-width sticky top-0 z-50 mb-12 bg-background/50 backdrop-blur-md transition-transform ${isShown ? "translate-y-0" : "-translate-y-full"}`}
+      className={`full-width sticky top-0 z-50 mb-12 bg-background backdrop-blur-md transition-transform md:bg-background/50 ${isShown ? "translate-y-0" : "-translate-y-full"}`}
     >
       <nav className="flex items-center justify-center gap-8 py-4 text-sm tracking-wide text-secondary">
         <a href="/integral-calculator/#calculator">
@@ -29,16 +33,58 @@ export default function Navbar() {
             <span className="text-transparent">Calculate</span>
           </span>
         </a>
-        <a className="uppercase" href="/integral-calculator/#how-to-use">
-          How to use
-        </a>
-        <a className="uppercase" href="/integral-calculator/#about">
-          About
-        </a>
-        <a className="uppercase" href="/integral-calculator/#contact">
-          Contact
-        </a>
-        <DarkModeSwitch className="ml-auto" />
+
+        <div className="relative order-last w-full md:order-none">
+          <button
+            aria-controls="primary-navigation"
+            aria-expanded={isMenuOpen}
+            className="ml-auto grid h-full place-items-center md:hidden"
+            onClick={() => {
+              setIsMenuOpen(!isMenuOpen);
+            }}
+          >
+            <Menu className="fill-secondary" />
+          </button>
+
+          <div
+            className={`absolute right-0 grid w-max grid-rows-[0fr] flex-col transition-[grid-template-rows_500ms_ease-in-out] md:static md:w-full md:grid-rows-[1fr] [button[aria-expanded="true"]_+_&]:grid-rows-[1fr] ${!isShown ? "!grid-rows-[0fr]" : ""}`}
+          >
+            <div className="overflow-hidden ml-auto">
+              <ul
+                id="primary-navigation"
+                className="flex w-full flex-col items-end gap-4 rounded-lg border border-primary/40 bg-background p-4 pl-14 md:flex-row md:items-center md:gap-8 md:border-none md:bg-transparent md:p-0"
+              >
+                <li>
+                  <a
+                    className="text-xs uppercase underline-offset-4 hover:underline md:inline"
+                    href="/integral-calculator/#how-to-use"
+                  >
+                    How to use
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="text-xs uppercase underline-offset-4 hover:underline md:inline"
+                    href="/integral-calculator/#about"
+                  >
+                    About
+                  </a>
+                </li>
+
+                <li>
+                  <a
+                    className="pb-4 text-xs uppercase underline-offset-4 hover:underline md:inline md:pb-0"
+                    href="/integral-calculator/#contact"
+                  >
+                    Contact
+                  </a>
+                </li>
+                <br />
+                <DarkModeSwitch />
+              </ul>
+            </div>
+          </div>
+        </div>
       </nav>
     </div>
   );
