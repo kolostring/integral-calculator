@@ -1,6 +1,7 @@
 import useScroll from "@/hooks/useScroll";
 import DarkModeSwitch from "./DarkModeSwitch";
 import Menu from "@/assets/menu.svg?react";
+import Close from "@/assets/close.svg?react";
 
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 
@@ -38,18 +39,23 @@ export default function Navbar() {
           <button
             aria-controls="primary-navigation"
             aria-expanded={isMenuOpen}
-            className="ml-auto grid h-full place-items-center md:hidden"
+            className="relative ml-auto flex h-6 w-6 md:hidden"
             onClick={() => {
               setIsMenuOpen(!isMenuOpen);
             }}
           >
-            <Menu className="fill-secondary" />
+            <Close
+              className={`absolute fill-secondary transition-all duration-300 ${isMenuOpen ? "rotate-0 opacity-100" : "-rotate-180 opacity-0"}`}
+            />
+            <Menu
+              className={`absolute fill-secondary transition-all ${!isMenuOpen ? "rotate-0 opacity-100" : "rotate-180 opacity-0"}`}
+            />
           </button>
 
           <div
             className={`absolute right-0 grid w-max grid-rows-[0fr] flex-col transition-[grid-template-rows_500ms_ease-in-out] md:static md:w-full md:grid-rows-[1fr] [button[aria-expanded="true"]_+_&]:grid-rows-[1fr] ${!isShown ? "!grid-rows-[0fr]" : ""}`}
           >
-            <div className="overflow-hidden ml-auto">
+            <div className="ml-auto overflow-hidden">
               <ul
                 id="primary-navigation"
                 className="flex w-full flex-col items-end gap-4 rounded-lg border border-primary/40 bg-background p-4 pl-14 md:flex-row md:items-center md:gap-8 md:border-none md:bg-transparent md:p-0"
